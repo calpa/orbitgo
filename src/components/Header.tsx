@@ -9,7 +9,7 @@ const Header = () => {
   const resetBalances = useSetAtom(resetBalancesAtom);
   // Set address in atom and reset balances when account changes
   const setAddress = useSetAtom(addressAtom);
-  
+
   useEffect(() => {
     // When address changes, update the addressAtom and reset balances
     if (address) {
@@ -24,7 +24,7 @@ const Header = () => {
   return (
     <header className="p-4 bg-white shadow-md">
       <div className="flex justify-between items-center">
-        <h1 className="text-xl font-bold">Treasury Management</h1>
+        <h1 className="text-xl font-bold">OrbitGO</h1>
         <ConnectButton />
       </div>
       {address && (

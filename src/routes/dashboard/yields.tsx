@@ -46,6 +46,7 @@ function RouteComponent() {
   const { address } = useAccount();
   const [sortOption, setSortOption] = useState<SortOption>("value_desc");
   const [selectedChainId, setSelectedChainId] = useState<number | undefined>();
+  const [hideZeroValue, setHideZeroValue] = useState(true);
 
   const handleChainClick = (chainId: number) => {
     setSelectedChainId(selectedChainId === chainId ? undefined : chainId);
@@ -256,7 +257,8 @@ function RouteComponent() {
       .map((query) => query.data)
       .flatMap((data) => data.result),
     sortOption,
-    selectedChainId
+    selectedChainId,
+    hideZeroValue
   );
 
   function exportCSV() {
@@ -343,9 +345,20 @@ function RouteComponent() {
 
         {/* Control Panel */}
         <div className="flex items-center gap-3">
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={hideZeroValue}
+              onChange={(e) => setHideZeroValue(e.target.checked)}
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+            <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Hide $0 Value</span>
+          </label>
+
           <div
             ref={dropdownRef}
-            className="relative inline-block text-left mr-2"
+            className="relative inline-block text-left"
           >
             <button
               type="button"

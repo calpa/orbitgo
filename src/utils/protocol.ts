@@ -64,8 +64,12 @@ export function filterProtocolsByChain(protocols: Protocol[], chainId?: number):
 export function processProtocols(
   protocols: Protocol[],
   sortOption: SortOption,
-  chainId?: number
+  chainId?: number,
+  hideZeroValue: boolean = true
 ): Protocol[] {
-  const filtered = filterProtocolsByChain(protocols, chainId);
+  let filtered = filterProtocolsByChain(protocols, chainId);
+  if (hideZeroValue) {
+    filtered = filtered.filter((protocol) => protocol.value_usd > 0);
+  }
   return filtered.sort((a, b) => sortProtocols(a, b, sortOption));
 }

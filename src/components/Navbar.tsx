@@ -35,9 +35,7 @@ function Navbar() {
               </g>
             </svg>
           </div>
-          <h1 className="text-xl font-bold text-gray-800">
-            Treasury Management
-          </h1>
+          <h1 className="text-xl font-bold text-gray-800">OrbitGO</h1>
         </div>
         <ConnectButton />
       </div>
