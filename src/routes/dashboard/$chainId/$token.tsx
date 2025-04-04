@@ -3,7 +3,7 @@ import { useAccount } from "wagmi";
 import { getTokenTransfersByAccount, TokenTransferResponse, getTokenMarketData, TokenMarketData } from "../../../utils";
 import { useQuery } from "@tanstack/react-query";
 
-export const Route = createFileRoute("/dashboard/$chain/$token")({
+export const Route = createFileRoute("/dashboard/$chainId/$token")({
   component: RouteComponent,
 });
 

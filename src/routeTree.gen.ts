@@ -17,7 +17,8 @@ import { Route as IndexImport } from './routes/index'
 import { Route as DashboardIndexImport } from './routes/dashboard/index'
 import { Route as ChainsIndexImport } from './routes/chains/index'
 import { Route as DashboardSendImport } from './routes/dashboard/send'
-import { Route as DashboardChainTokenImport } from './routes/dashboard/$chain/$token'
+import { Route as DashboardChainIdIndexImport } from './routes/dashboard/$chainId/index'
+import { Route as DashboardChainIdTokenImport } from './routes/dashboard/$chainId/$token'
 
 // Create/Update Routes
 
@@ -57,9 +58,15 @@ const DashboardSendRoute = DashboardSendImport.update({
   getParentRoute: () => DashboardRoute,
 } as any)
 
-const DashboardChainTokenRoute = DashboardChainTokenImport.update({
-  id: '/$chain/$token',
-  path: '/$chain/$token',
+const DashboardChainIdIndexRoute = DashboardChainIdIndexImport.update({
+  id: '/$chainId/',
+  path: '/$chainId/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+
+const DashboardChainIdTokenRoute = DashboardChainIdTokenImport.update({
+  id: '/$chainId/$token',
+  path: '/$chainId/$token',
   getParentRoute: () => DashboardRoute,
 } as any)
 
@@ -109,11 +116,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexImport
       parentRoute: typeof DashboardImport
     }
-    '/dashboard/$chain/$token': {
-      id: '/dashboard/$chain/$token'
-      path: '/$chain/$token'
-      fullPath: '/dashboard/$chain/$token'
-      preLoaderRoute: typeof DashboardChainTokenImport
+    '/dashboard/$chainId/$token': {
+      id: '/dashboard/$chainId/$token'
+      path: '/$chainId/$token'
+      fullPath: '/dashboard/$chainId/$token'
+      preLoaderRoute: typeof DashboardChainIdTokenImport
+      parentRoute: typeof DashboardImport
+    }
+    '/dashboard/$chainId/': {
+      id: '/dashboard/$chainId/'
+      path: '/$chainId'
+      fullPath: '/dashboard/$chainId'
+      preLoaderRoute: typeof DashboardChainIdIndexImport
       parentRoute: typeof DashboardImport
     }
   }
@@ -124,13 +138,15 @@ declare module '@tanstack/react-router' {
 interface DashboardRouteChildren {
   DashboardSendRoute: typeof DashboardSendRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
-  DashboardChainTokenRoute: typeof DashboardChainTokenRoute
+  DashboardChainIdTokenRoute: typeof DashboardChainIdTokenRoute
+  DashboardChainIdIndexRoute: typeof DashboardChainIdIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardSendRoute: DashboardSendRoute,
   DashboardIndexRoute: DashboardIndexRoute,
-  DashboardChainTokenRoute: DashboardChainTokenRoute,
+  DashboardChainIdTokenRoute: DashboardChainIdTokenRoute,
+  DashboardChainIdIndexRoute: DashboardChainIdIndexRoute,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
@@ -144,7 +160,8 @@ export interface FileRoutesByFullPath {
   '/dashboard/send': typeof DashboardSendRoute
   '/chains': typeof ChainsIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
-  '/dashboard/$chain/$token': typeof DashboardChainTokenRoute
+  '/dashboard/$chainId/$token': typeof DashboardChainIdTokenRoute
+  '/dashboard/$chainId': typeof DashboardChainIdIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -153,7 +170,8 @@ export interface FileRoutesByTo {
   '/dashboard/send': typeof DashboardSendRoute
   '/chains': typeof ChainsIndexRoute
   '/dashboard': typeof DashboardIndexRoute
-  '/dashboard/$chain/$token': typeof DashboardChainTokenRoute
+  '/dashboard/$chainId/$token': typeof DashboardChainIdTokenRoute
+  '/dashboard/$chainId': typeof DashboardChainIdIndexRoute
 }
 
 export interface FileRoutesById {
@@ -164,7 +182,8 @@ export interface FileRoutesById {
   '/dashboard/send': typeof DashboardSendRoute
   '/chains/': typeof ChainsIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
-  '/dashboard/$chain/$token': typeof DashboardChainTokenRoute
+  '/dashboard/$chainId/$token': typeof DashboardChainIdTokenRoute
+  '/dashboard/$chainId/': typeof DashboardChainIdIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -176,7 +195,8 @@ export interface FileRouteTypes {
     | '/dashboard/send'
     | '/chains'
     | '/dashboard/'
-    | '/dashboard/$chain/$token'
+    | '/dashboard/$chainId/$token'
+    | '/dashboard/$chainId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -184,7 +204,8 @@ export interface FileRouteTypes {
     | '/dashboard/send'
     | '/chains'
     | '/dashboard'
-    | '/dashboard/$chain/$token'
+    | '/dashboard/$chainId/$token'
+    | '/dashboard/$chainId'
   id:
     | '__root__'
     | '/'
@@ -193,7 +214,8 @@ export interface FileRouteTypes {
     | '/dashboard/send'
     | '/chains/'
     | '/dashboard/'
-    | '/dashboard/$chain/$token'
+    | '/dashboard/$chainId/$token'
+    | '/dashboard/$chainId/'
   fileRoutesById: FileRoutesById
 }
 
@@ -238,7 +260,8 @@ export const routeTree = rootRoute
       "children": [
         "/dashboard/send",
         "/dashboard/",
-        "/dashboard/$chain/$token"
+        "/dashboard/$chainId/$token",
+        "/dashboard/$chainId/"
       ]
     },
     "/dashboard/send": {
@@ -252,8 +275,12 @@ export const routeTree = rootRoute
       "filePath": "dashboard/index.tsx",
       "parent": "/dashboard"
     },
-    "/dashboard/$chain/$token": {
-      "filePath": "dashboard/$chain/$token.tsx",
+    "/dashboard/$chainId/$token": {
+      "filePath": "dashboard/$chainId/$token.tsx",
+      "parent": "/dashboard"
+    },
+    "/dashboard/$chainId/": {
+      "filePath": "dashboard/$chainId/index.tsx",
       "parent": "/dashboard"
     }
   }
