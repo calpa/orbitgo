@@ -7,6 +7,7 @@ import { exportProtocolsToCSV } from "../../utils/export";
 
 import axios from "../../axios";
 import { YieldCard } from "../../components/YieldCard";
+import { ProtocolAllocationChart } from "../../components/ProtocolAllocationChart";
 import type { PortfolioResponse2, Protocol } from "../../types";
 import chainsData from "../../constants/chains.json";
 import { processProtocols, SortOption } from "../../utils/protocol";
@@ -463,23 +464,30 @@ function RouteComponent() {
         </div>
       )}
 
-      {/* Total Balances */}
-      <div className="mb-6 p-4 bg-white rounded-lg shadow">
-        <h2 className="text-xl font-semibold mb-4">Total Balances</h2>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-sm text-gray-600">Total Value</p>
-            <p className="text-lg font-bold">
-              $
-              {allProtocols
-                .reduce((sum, protocol) => sum + protocol.value_usd, 0)
-                .toFixed(2)}
-            </p>
+      {/* Total Balances and Allocation Chart */}
+      <div className="mb-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="p-4 bg-white rounded-lg shadow">
+          <h2 className="text-xl font-semibold mb-4">Total Balances</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-sm text-gray-600">Total Value</p>
+              <p className="text-lg font-bold">
+                $
+                {allProtocols
+                  .reduce((sum, protocol) => sum + protocol.value_usd, 0)
+                  .toFixed(2)}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Total Protocols</p>
+              <p className="text-lg font-bold">{allProtocols.length}</p>
+            </div>
           </div>
-          <div>
-            <p className="text-sm text-gray-600">Total Protocols</p>
-            <p className="text-lg font-bold">{allProtocols.length}</p>
-          </div>
+        </div>
+        
+        <div className="p-4 bg-white rounded-lg shadow">
+          <h2 className="text-xl font-semibold mb-4">Protocol Allocation</h2>
+          <ProtocolAllocationChart protocols={allProtocols} />
         </div>
       </div>
 
