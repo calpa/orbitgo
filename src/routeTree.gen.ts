@@ -15,6 +15,7 @@ import { Route as DashboardImport } from './routes/dashboard'
 import { Route as AboutImport } from './routes/about'
 import { Route as IndexImport } from './routes/index'
 import { Route as DashboardIndexImport } from './routes/dashboard/index'
+import { Route as ChainsIndexImport } from './routes/chains/index'
 import { Route as DashboardSendImport } from './routes/dashboard/send'
 import { Route as DashboardChainTokenImport } from './routes/dashboard/$chain/$token'
 
@@ -42,6 +43,12 @@ const DashboardIndexRoute = DashboardIndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => DashboardRoute,
+} as any)
+
+const ChainsIndexRoute = ChainsIndexImport.update({
+  id: '/chains/',
+  path: '/chains/',
+  getParentRoute: () => rootRoute,
 } as any)
 
 const DashboardSendRoute = DashboardSendImport.update({
@@ -88,6 +95,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSendImport
       parentRoute: typeof DashboardImport
     }
+    '/chains/': {
+      id: '/chains/'
+      path: '/chains'
+      fullPath: '/chains'
+      preLoaderRoute: typeof ChainsIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/dashboard/': {
       id: '/dashboard/'
       path: '/'
@@ -128,6 +142,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/dashboard/send': typeof DashboardSendRoute
+  '/chains': typeof ChainsIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/$chain/$token': typeof DashboardChainTokenRoute
 }
@@ -136,6 +151,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/dashboard/send': typeof DashboardSendRoute
+  '/chains': typeof ChainsIndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/dashboard/$chain/$token': typeof DashboardChainTokenRoute
 }
@@ -146,6 +162,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/dashboard/send': typeof DashboardSendRoute
+  '/chains/': typeof ChainsIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/$chain/$token': typeof DashboardChainTokenRoute
 }
@@ -157,6 +174,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/dashboard'
     | '/dashboard/send'
+    | '/chains'
     | '/dashboard/'
     | '/dashboard/$chain/$token'
   fileRoutesByTo: FileRoutesByTo
@@ -164,6 +182,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/dashboard/send'
+    | '/chains'
     | '/dashboard'
     | '/dashboard/$chain/$token'
   id:
@@ -172,6 +191,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/dashboard'
     | '/dashboard/send'
+    | '/chains/'
     | '/dashboard/'
     | '/dashboard/$chain/$token'
   fileRoutesById: FileRoutesById
@@ -181,12 +201,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   DashboardRoute: typeof DashboardRouteWithChildren
+  ChainsIndexRoute: typeof ChainsIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   DashboardRoute: DashboardRouteWithChildren,
+  ChainsIndexRoute: ChainsIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -201,7 +223,8 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/about",
-        "/dashboard"
+        "/dashboard",
+        "/chains/"
       ]
     },
     "/": {
@@ -221,6 +244,9 @@ export const routeTree = rootRoute
     "/dashboard/send": {
       "filePath": "dashboard/send.tsx",
       "parent": "/dashboard"
+    },
+    "/chains/": {
+      "filePath": "chains/index.tsx"
     },
     "/dashboard/": {
       "filePath": "dashboard/index.tsx",

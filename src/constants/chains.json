@@ -1,0 +1,54 @@
+{
+  "result": [
+    {
+      "id": 1,
+      "name": "Ethereum",
+      "icon": "https:\/\/app.1inch.io\/assets\/images\/network-logos\/ethereum.svg"
+    },
+    {
+      "id": 56,
+      "name": "BNB Chain",
+      "icon": "https:\/\/app.1inch.io\/assets\/images\/network-logos\/bsc_2.svg"
+    },
+    {
+      "id": 137,
+      "name": "Polygon",
+      "icon": "https:\/\/app.1inch.io\/assets\/images\/network-logos\/polygon_1.svg"
+    },
+    {
+      "id": 42161,
+      "name": "Arbitrum",
+      "icon": "https:\/\/app.1inch.io\/assets\/images\/network-logos\/arbitrum_2.svg"
+    },
+    {
+      "id": 100,
+      "name": "Gnosis",
+      "icon": "https:\/\/app.1inch.io\/assets\/images\/network-logos\/gnosis.svg"
+    },
+    {
+      "id": 10,
+      "name": "Optimism",
+      "icon": "https:\/\/app.1inch.io\/assets\/images\/network-logos\/optimism.svg"
+    },
+    {
+      "id": 8453,
+      "name": "Base",
+      "icon": "https:\/\/app.1inch.io\/assets\/images\/network-logos\/base.svg"
+    },
+    {
+      "id": 43114,
+      "name": "Avalanche",
+      "icon": "https:\/\/app.1inch.io\/assets\/images\/network-logos\/avalanche.svg"
+    },
+    {
+      "id": 324,
+      "name": "zkSync Era",
+      "icon": "https:\/\/app.1inch.io\/assets\/images\/network-logos\/zksync-era.svg"
+    },
+    {
+      "id": 59144,
+      "name": "Linea",
+      "icon": "https:\/\/app.1inch.io\/assets\/images\/network-logos\/linea.svg"
+    }
+  ]
+}
