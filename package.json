@@ -5,14 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
     "@rainbow-me/rainbowkit": "^2.2.4",
     "@tailwindcss/vite": "^4.0.17",
-    "@tanstack/react-query": "^5.69.0",
+    "@tanstack/react-query": "^5.71.5",
     "@tanstack/react-router": "^1.114.27",
     "axios": "^1.8.4",
     "jotai": "^2.12.2",
