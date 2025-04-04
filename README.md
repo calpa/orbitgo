@@ -1,91 +1,134 @@
-# OrbitGO – Frontend
+# OrbitGO Treasury Management Frontend
 
-💼 A multi-chain USDC DAO treasury dashboard powered by [1inch Portfolio API](https://portal.1inch.dev/documentation/apis/portfolio).
+💼 A modern dashboard for managing and analyzing DeFi treasury positions across multiple protocols and chains, powered by [1inch Portfolio API](https://portal.1inch.dev/documentation/apis/portfolio).
 
-## 🧭 Project Overview
+## 🌟 Features
 
-OrbitGO is a frontend dashboard designed for DAO treasury managers. It aggregates multi-chain portfolio data and focuses on managing USDC stablecoin assets. This frontend implementation uses the [1inch Portfolio API] to display real-time cross-chain asset distribution and protocol-based insights.
+### Portfolio Management
+- **Multi-Chain Support**: Track assets across 10+ major chains including Ethereum, BSC, Polygon, Arbitrum, Optimism, Base, and more
+- **Protocol Integration**: View positions in various DeFi protocols with real-time value updates
+- **Zero-Value Filtering**: Option to hide protocols with $0 total value
+- **Sorting Options**: Sort by value, ROI, APR, and other key metrics
 
-> 🔗 API Source: [1inch Portfolio API Documentation](https://portal.1inch.dev/documentation/apis/portfolio)
+### Data Visualization
+- **Protocol Allocation Chart**: Interactive pie chart showing asset distribution across protocols
+- **Total Value Overview**: Real-time summary of total portfolio value and protocol count
+- **Chain Distribution**: Detailed breakdown of assets by blockchain
+- **Custom Filtering**: Filter protocols by chain, value, and other parameters
 
-## 📦 Features
-
-- Supports multi-chain portfolio viewing (Ethereum, Arbitrum, BNB Chain, Polygon, etc.)
-- Displays real-time USD value per chain
-- Categorizes protocols: native / stable / token
-- Visualizes portfolio distribution and composition
-- Supports mock JSON for development and UI testing
-
-## 🖼️ Sample Response JSON
-
-Based on `1response.json` provided:
-
-```json
-{
-  "protocol_name": "native",
-  "result": [
-    { "chain_id": 1, "value_usd": 0.0 },
-    { "chain_id": 56, "value_usd": 0.5604 },
-    { "chain_id": 8453, "value_usd": 8.6028 },
-    { "chain_id": 42161, "value_usd": 0.7044 }
-  ]
-}
-```
-
-## 🧰 Tech Stack
-
-- **Framework**: React.js + TypeScript
-- **Styling**: Tailwind CSS
-- **Deployment**: Cloudflare Pages
-- **Wallet Integration**: RainbowKit + Wagmi
-- **Tooling**: Vite
+### Data Export
+- **CSV Export**: Export protocol data with customizable fields
+- **Formatted Data**: Well-structured exports including Protocol, Chain, Value (USD), ROI, and APR
 
 ## 🚀 Getting Started
 
+### Prerequisites
+- Node.js 18+
+- npm or yarn
+- 1inch API key
+
+### Installation
 ```bash
+# Clone the repository
+git clone https://github.com/your-username/treasury-management-frontend.git
+
 # Install dependencies
 npm install
 
-# Run the development server
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your API key
+
+# Start development server
 npm run dev
 ```
 
 ## 📁 Project Structure
-
 ```
 src/
-  ├── components/         # UI components
-  ├── pages/              # Main and subpages
-  ├── utils/              # Data transformation & chain mapping
-  └── data/mock.json      # Mock data for development
+├── components/          # Reusable UI components
+│   ├── YieldCard/       # Protocol yield display
+│   └── ProtocolAllocationChart/  # Portfolio visualization
+├── routes/              # Application routes
+│   └── dashboard/       # Main dashboard views
+├── utils/              # Utility functions
+│   ├── csv.ts          # CSV export utilities
+│   ├── protocol.ts     # Protocol data processing
+│   └── export.ts       # Export formatting
+├── constants/          # Configuration constants
+│   └── chains.ts       # Chain definitions
+└── types.ts           # TypeScript type definitions
 ```
 
 ## 🔌 API Integration
 
-- Endpoint used:
+### Portfolio Overview Endpoint
+```typescript
+GET /portfolio/v4/overview/protocols/current_value
 
-  - `GET /portfolio/v4/overview/protocols/current_value`
+// Headers
+Authorization: Bearer ${VITE_1INCH_API_KEY}
 
-- Required headers:
+// Response Type
+interface PortfolioResponse2 {
+  result: Protocol[];
+}
 
-  ```
-  Authorization: Bearer <API_KEY>
-  ```
+interface Protocol {
+  chain_id: number;
+  name: string;
+  value_usd: number;
+  roi?: number;
+  info: {
+    weighted_apr: number;
+  };
+}
+```
 
-- Expected response format:
-  ```ts
-  interface PortfolioResult {
-    protocol_name: string;
-    result: { chain_id: number; value_usd: number }[];
-  }
-  ```
+## 🛠️ Tech Stack
 
-## 🧪 Development Tips
+### Core
+- **Framework**: React 18 with TypeScript
+- **Build Tool**: Vite
+- **Styling**: TailwindCSS
+- **State Management**: React Query
 
-1. Start with `mock.json` to build UI components
-2. Later, connect to live 1inch API (use `.env` with `VITE_API_KEY`)
-3. Expand to support multiple wallets and full protocol views
+### Data & Visualization
+- **Charts**: Recharts
+- **Data Fetching**: Axios
+- **Web3**: RainbowKit + wagmi
 
-## 📜 License
+### Development
+- **Linting**: ESLint
+- **Formatting**: Prettier
+- **Testing**: Vitest (planned)
+
+## 🔐 Security
+
+- API keys are stored in environment variables
+- All data processing happens client-side
+- Secure wallet connections via RainbowKit
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+MIT License - see the [LICENSE](LICENSE) file for details
+
+## 💡 Development Tips
+
+1. Use environment variables for configuration
+2. Run tests before submitting PRs
+3. Follow the existing code style and conventions
+4. Keep components small and focused
+5. Document new features and API changes
+
+## 📝 License
 
 MIT License © 2025 OrbitGO
