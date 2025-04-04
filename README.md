@@ -1,6 +1,25 @@
 # OrbitGO Treasury Management Frontend
 
-💼 A modern dashboard for managing and analyzing DeFi treasury positions across multiple protocols and chains, powered by [1inch Portfolio API](https://portal.1inch.dev/documentation/apis/portfolio).
+💼 A modern DeFi treasury dashboard powered by the [1inch Portfolio API](https://portal.1inch.dev/documentation/apis/portfolio), providing real-time portfolio tracking and analytics across multiple chains and protocols.
+
+## 🔥 1inch Portfolio API Integration
+
+OrbitGO leverages the powerful 1inch Portfolio API to deliver comprehensive treasury management capabilities:
+
+### Real-time Portfolio Tracking
+- Cross-chain portfolio monitoring across 10+ networks
+- Protocol-level position tracking with accurate USD valuations
+- Automatic ROI and APR calculations
+
+### Data Aggregation
+- Unified view of positions across all supported chains
+- Protocol categorization and filtering
+- Real-time portfolio value updates
+
+### Performance Analytics
+- Protocol-specific ROI tracking
+- Chain-based portfolio distribution analysis
+- Historical value tracking with custom date ranges
 
 ## 🌟 Features
 
@@ -120,6 +139,26 @@ interface Protocol {
 ## 📝 License
 
 MIT License - see the [LICENSE](LICENSE) file for details
+
+## 📝 TODO: Future Enhancements
+
+### Portfolio API Extensions
+- [ ] Implement historical performance tracking
+- [ ] Add profit/loss calculations per protocol
+- [ ] Include token-level portfolio breakdown
+- [ ] Add portfolio performance charts
+
+### Additional 1inch API Integrations
+- [ ] Token prices API for detailed valuations
+- [ ] Transaction history for activity tracking
+- [ ] Wallet balances API integration
+- [ ] Fusion+ integration for cross-chain operations
+
+### User Experience
+- [ ] Portfolio alerts and notifications
+- [ ] Custom portfolio comparison tools
+- [ ] Enhanced analytics dashboard
+- [ ] Mobile-responsive design improvements
 
 ## 💡 Development Tips
 
