@@ -1,4 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
+import moment from "moment";
+import { exportToCSV } from "../utils/csv";
 import { useAccount } from "wagmi";
 import axios from "axios";
 import { randomDelay } from "../utils/delay";
@@ -12,7 +14,6 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import moment from "moment";
 
 const INCH_API_URL = "/1inch";
 const INCH_API_KEY = import.meta.env.VITE_1INCH_API_KEY;
@@ -83,21 +84,18 @@ export function ValueChart() {
   function exportAsCSV() {
     if (!chartData) return;
 
-    const header = "Date,Value (USD)";
-    const csvRows = chartData.result.map(
-      (item) =>
-        `${new Date(item.timestamp * 1000).toISOString()},${item.value_usd}`
-    );
-    const csvContent =
-      "data:text/csv;charset=utf-8," +
-      encodeURIComponent([header, ...csvRows].join("\n"));
-    const link = document.createElement("a");
-    link.setAttribute("href", csvContent);
-
     const from = moment().subtract(timerange).format("YYYY-MM-DD");
     const to = moment().format("YYYY-MM-DD");
-    link.setAttribute("download", `${address}_from_${from}_to_${to}_value.csv`);
-    link.click();
+
+    exportToCSV({
+      headers: ["Date", "Value (USD)"],
+      rowTransformer: (item) => [
+        new Date(item.timestamp * 1000).toISOString(),
+        item.value_usd.toString(),
+      ],
+      data: chartData.result,
+      filename: `${address}_from_${from}_to_${to}_value`,
+    });
   }
 
   const gettingData = isLoading || isRefetching;
