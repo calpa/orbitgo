@@ -1,5 +1,5 @@
-import { Axios } from "axios";
+import axios, { AxiosInstance } from "axios";
 
-const axios = new Axios();
+let customAxios: AxiosInstance = axios.create();
 
-export default axios;
+export default customAxios;

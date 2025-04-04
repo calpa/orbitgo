@@ -84,7 +84,7 @@ interface ProtocolInfo {
   rewards?: number | null;
 }
 
-interface Protocol {
+export interface Protocol {
   chain_id: number;
   contract_address: string;
   token_id: number;
