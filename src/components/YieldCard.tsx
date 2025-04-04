@@ -1,4 +1,23 @@
 import { formatNumber } from "../utils/format";
+import dappsConfig from "../constants/dapps.json";
+
+const getProtocolUrl = (info: YieldInfo) => {
+  console.log("info", info);
+  const protocolName = info.protocol_name;
+  const dapp = dappsConfig.dapps.find((d) =>
+    protocolName.toLowerCase().includes(d.name.toLowerCase())
+  );
+  if (!dapp) return null;
+
+  let url = dapp.url;
+
+  return url;
+};
+
+interface Protocol {
+  name: string;
+  pool_id?: string;
+}
 
 interface UnderlyingToken {
   chain_id: number;
@@ -6,27 +25,31 @@ interface UnderlyingToken {
   name: string;
   symbol: string;
   decimals: number;
+  price_usd: number;
   amount: number;
-  price_to_usd: number;
   value_usd: number;
 }
 
-interface RewardToken extends UnderlyingToken {}
-
 interface YieldInfo {
   chain_id: number;
-  contract_address: string;
-  protocol: string;
-  name: string;
-  protocol_name: string;
+  protocol: Protocol | string;
+  protocol_url: string;
   protocol_icon: string;
-  underlying_tokens: UnderlyingToken[];
-  rewards_tokens: RewardToken[];
+  protocol_name: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+  price_usd: number;
+  amount: number;
   value_usd: number;
-  profit_abs_usd: number | null;
-  roi: number | null;
+  underlying_tokens: UnderlyingToken[];
+  reward_tokens: UnderlyingToken[];
   weighted_apr: number | null;
+  roi: number | null;
   holding_time_days: number | null;
+  apr: number;
+  apy: number;
+  tvl_usd: number;
 }
 
 interface YieldCardProps {
@@ -34,8 +57,20 @@ interface YieldCardProps {
 }
 
 export function YieldCard({ info }: YieldCardProps) {
+  function openDAPP(info: YieldInfo) {
+    const url = getProtocolUrl(info);
+    if (url) {
+      window.open(url, "_blank");
+    } else {
+      console.log("No URL for Protocl");
+    }
+  }
+
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+    <div
+      className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer"
+      onClick={() => openDAPP(info)}
+    >
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -108,8 +143,8 @@ export function YieldCard({ info }: YieldCardProps) {
                   </div>
                   <div className="text-right">
                     <p className="text-sm">
-                      {formatNumber(token.amount)} (${formatNumber(token.value_usd)}
-                      )
+                      {formatNumber(token.amount)} ($
+                      {formatNumber(token.value_usd)})
                     </p>
                   </div>
                 </div>
@@ -119,11 +154,11 @@ export function YieldCard({ info }: YieldCardProps) {
         )}
 
         {/* Reward Tokens */}
-        {info.rewards_tokens.length > 0 && (
-          <div>
-            <p className="text-sm text-gray-600 mb-2">Reward Tokens</p>
+        {info.reward_tokens && info.reward_tokens.length > 0 && (
+          <div className="mt-4">
+            <h3 className="text-sm font-medium text-gray-900 mb-2">Rewards</h3>
             <div className="space-y-2">
-              {info.rewards_tokens.map((token) => (
+              {info.reward_tokens.map((token: UnderlyingToken) => (
                 <div
                   key={token.address}
                   className="flex items-center justify-between"
@@ -133,8 +168,8 @@ export function YieldCard({ info }: YieldCardProps) {
                   </div>
                   <div className="text-right">
                     <p className="text-sm">
-                      {formatNumber(token.amount)} (${formatNumber(token.value_usd)}
-                      )
+                      {formatNumber(token.amount)} ($
+                      {formatNumber(token.value_usd)})
                     </p>
                   </div>
                 </div>

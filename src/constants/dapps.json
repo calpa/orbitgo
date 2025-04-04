@@ -1,0 +1,88 @@
+{
+  "dapps": [
+    {
+      "name": "Uniswap",
+      "url": "https://app.uniswap.org"
+    },
+    {
+      "name": "Kelp DAO",
+      "url": "https://kerneldao.com/kelp/"
+    },
+    {
+      "name": "Aave",
+      "url": "https://app.aave.com"
+    },
+    {
+      "name": "Compound",
+      "url": "https://app.compound.finance"
+    },
+    {
+      "name": "SushiSwap",
+      "url": "https://app.sushi.com"
+    },
+    {
+      "name": "Balancer",
+      "url": "https://app.balancer.fi"
+    },
+    {
+      "name": "Yearn Finance",
+      "url": "https://yearn.fi"
+    },
+    {
+      "name": "Curve",
+      "url": "https://curve.fi"
+    },
+    {
+      "name": "1inch",
+      "url": "https://app.1inch.io"
+    },
+    {
+      "name": "OpenSea",
+      "url": "https://opensea.io"
+    },
+    {
+      "name": "Zapper",
+      "url": "https://zapper.fi"
+    },
+    {
+      "name": "Zerion",
+      "url": "https://zerion.io"
+    },
+    {
+      "name": "Snapshot",
+      "url": "https://snapshot.org"
+    },
+    {
+      "name": "QuickSwap V2",
+      "url": "https://quickswap.exchange"
+    },
+    {
+      "name": "PancakeSwap",
+      "url": "https://pancakeswap.finance"
+    },
+    {
+      "name": "dYdX",
+      "url": "https://dydx.exchange"
+    },
+    {
+      "name": "Lido",
+      "url": "https://lido.fi"
+    },
+    {
+      "name": "Rocket Pool",
+      "url": "https://rocketpool.net"
+    },
+    {
+      "name": "Synthetix",
+      "url": "https://synthetix.io"
+    },
+    {
+      "name": "MakerDAO",
+      "url": "https://makerdao.com"
+    },
+    {
+      "name": "Frax Finance",
+      "url": "https://frax.finance"
+    }
+  ]
+}
