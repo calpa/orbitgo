@@ -3,9 +3,11 @@ import { Protocol } from "../types";
 /**
  * Sort options for protocol list
  */
-export type SortOption = 
+export type SortOption =
+  | "roi_desc"
+  | "roi_asc"
   | "value_desc"
-  | "value_asc" 
+  | "value_asc"
   | "time_desc"
   | "time_asc"
   | "name_desc"
@@ -20,20 +22,24 @@ export type SortOption =
  */
 export function sortProtocols(a: Protocol, b: Protocol, sortOption: SortOption): number {
   switch (sortOption) {
+    case "roi_desc":
+      return ((b.info?.weighted_apr || 0) + (b.info?.roi || 0)) - ((a.info?.weighted_apr || 0) + (a.info?.roi || 0));
+    case "roi_asc":
+      return ((a.info?.weighted_apr || 0) + (a.info?.roi || 0)) - ((b.info?.weighted_apr || 0) + (b.info?.roi || 0));
     case "value_desc":
-      return b.value_usd - a.value_usd;
+      return (b.value_usd || 0) - (a.value_usd || 0);
     case "value_asc":
-      return a.value_usd - b.value_usd;
+      return (a.value_usd || 0) - (b.value_usd || 0);
     case "time_desc":
       return (b.holding_time_days || 0) - (a.holding_time_days || 0);
     case "time_asc":
       return (a.holding_time_days || 0) - (b.holding_time_days || 0);
     case "name_desc":
-      return b.name.localeCompare(a.name);
+      return (b.name || "").localeCompare(a.name || "");
     case "name_asc":
-      return a.name.localeCompare(b.name);
+      return (a.name || "").localeCompare(b.name || "");
     default:
-      return b.value_usd - a.value_usd;
+      return 0;
   }
 }
 

@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useAccount } from "wagmi";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { exportProtocolsToCSV } from "../../utils/export";
 
 import axios from "../../axios";
 import { YieldCard } from "../../components/YieldCard";
@@ -54,6 +55,8 @@ function RouteComponent() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const sortOptions = [
+    { value: "roi_desc", label: "ROI (High to Low)" },
+    { value: "roi_asc", label: "ROI (Low to High)" },
     { value: "value_desc", label: "Total Value (High to Low)" },
     { value: "value_asc", label: "Total Value (Low to High)" },
     { value: "time_desc", label: "Holding Time (Long to Short)" },
@@ -257,50 +260,34 @@ function RouteComponent() {
   );
 
   function exportCSV() {
-    if (allProtocols.length === 0) return;
-
-    const header =
-      "Protocol,Chain,Contract Address,Value (USD),Holding Time (Days)";
-    const csvRows = allProtocols.map(
-      (protocol) =>
-        `${protocol.name},${chainData[protocol.chain_id].name},${protocol.contract_address},${protocol.value_usd.toFixed(2)},${protocol.holding_time_days || 0}`
-    );
-    const csvContent =
-      "data:text/csv;charset=utf-8," +
-      encodeURIComponent([header, ...csvRows].join("\n"));
-    const link = document.createElement("a");
-    link.setAttribute("href", csvContent);
-    link.setAttribute("download", "yield_overview.csv");
-    link.click();
+    exportProtocolsToCSV(allProtocols, chainData);
   }
 
   return (
     <div className="container mx-auto px-6 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">
-          dAPPs{" "}
-          {allProtocols.length > 0 && (
-            <motion.span
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1 }}
-            >
-              (
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-900">
+            dAPPs{" "}
+            {allProtocols.length > 0 && (
               <motion.span
-                key={allProtocols.length}
-                initial={{ fontSize: "1em" }}
-                animate={{ fontSize: ["1em", "1.5em", "1em"] }}
-                transition={{ duration: 1.5, times: [0, 0.5, 1] }}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1 }}
               >
-                {allProtocols.length}
+                (
+                <motion.span
+                  key={allProtocols.length}
+                  initial={{ fontSize: "1em" }}
+                  animate={{ fontSize: ["1em", "1.5em", "1em"] }}
+                  transition={{ duration: 1.5, times: [0, 0.5, 1] }}
+                >
+                  {allProtocols.length}
+                </motion.span>
+                )
               </motion.span>
-              )
-            </motion.span>
-          )}
-        </h1>
-
-        {/* Control Panel */}
-        <div className="flex items-center gap-3">
+            )}
+          </h1>
           {/* Blockchain Icons */}
           <div className="flex items-center gap-2">
             {queries.map((query, index) => {
@@ -319,10 +306,11 @@ function RouteComponent() {
                     stiffness: 260,
                     damping: 20,
                   }}
-                  className="relative rounded-full w-8 h-8 overflow-hidden"
+                  className="relative rounded-full w-8 h-8 overflow-hidden cursor-pointer"
                   title={`${chain.name}${!query.isFetched ? " (Loading...)" : query.isError ? " (Error)" : ""}`}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={() => query.refetch()}
                 >
                   <motion.img
                     src={chain.icon}
@@ -351,7 +339,10 @@ function RouteComponent() {
               );
             })}
           </div>
+        </div>
 
+        {/* Control Panel */}
+        <div className="flex items-center gap-3">
           <div
             ref={dropdownRef}
             className="relative inline-block text-left mr-2"
