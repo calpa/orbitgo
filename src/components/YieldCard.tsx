@@ -30,7 +30,9 @@ interface UnderlyingToken {
   value_usd: number;
 }
 
-interface YieldInfo {
+import { YieldInfo } from "../types/yield";
+
+interface YieldCardProps {
   chain_id: number;
   protocol: Protocol | string;
   protocol_url: string;
@@ -50,13 +52,10 @@ interface YieldInfo {
   apr: number;
   apy: number;
   tvl_usd: number;
-}
-
-interface YieldCardProps {
   info: YieldInfo;
 }
 
-export function YieldCard({ info }: YieldCardProps) {
+export const YieldCard = ({ info }: YieldCardProps) => {
   function openDAPP(info: YieldInfo) {
     const url = getProtocolUrl(info);
     if (url) {

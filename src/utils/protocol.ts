@@ -1,4 +1,4 @@
-import { Protocol } from "../types";
+import { YieldInfo } from "../types/yield";
 
 /**
  * Sort options for protocol list
@@ -20,12 +20,16 @@ export type SortOption =
  * @param sortOption - Sort option to determine sorting order
  * @returns Comparison result (-1, 0, or 1)
  */
-export function sortProtocols(a: Protocol, b: Protocol, sortOption: SortOption): number {
+export function compareProtocols(
+  a: YieldInfo,
+  b: YieldInfo,
+  sortOption: SortOption
+): number {
   switch (sortOption) {
     case "roi_desc":
-      return ((b.info?.weighted_apr || 0) + (b.info?.roi || 0)) - ((a.info?.weighted_apr || 0) + (a.info?.roi || 0));
+      return (b.value_usd || 0) - (a.value_usd || 0);
     case "roi_asc":
-      return ((a.info?.weighted_apr || 0) + (a.info?.roi || 0)) - ((b.info?.weighted_apr || 0) + (b.info?.roi || 0));
+      return (a.value_usd || 0) - (b.value_usd || 0);
     case "value_desc":
       return (b.value_usd || 0) - (a.value_usd || 0);
     case "value_asc":
@@ -49,9 +53,12 @@ export function sortProtocols(a: Protocol, b: Protocol, sortOption: SortOption):
  * @param chainId - Chain ID to filter by, if undefined returns all protocols
  * @returns Filtered array of protocols
  */
-export function filterProtocolsByChain(protocols: Protocol[], chainId?: number): Protocol[] {
+export function filterProtocolsByChain(
+  protocols: YieldInfo[],
+  chainId?: number
+): YieldInfo[] {
   if (!chainId) return protocols;
-  return protocols.filter(protocol => protocol.chain_id === chainId);
+  return protocols.filter((protocol) => protocol.chain_id === chainId);
 }
 
 /**
@@ -61,15 +68,15 @@ export function filterProtocolsByChain(protocols: Protocol[], chainId?: number):
  * @param chainId - Optional chain ID to filter protocols
  * @returns Processed protocol array
  */
-export function processProtocols(
-  protocols: Protocol[],
+export const processProtocols = (
+  protocols: YieldInfo[],
   sortOption: SortOption,
-  chainId?: number,
+  filterChainId?: number,
   hideZeroValue: boolean = true
-): Protocol[] {
-  let filtered = filterProtocolsByChain(protocols, chainId);
+): YieldInfo[] => {
+  let filtered = filterProtocolsByChain(protocols, filterChainId);
   if (hideZeroValue) {
     filtered = filtered.filter((protocol) => protocol.value_usd > 0);
   }
-  return filtered.sort((a, b) => sortProtocols(a, b, sortOption));
+  return [...filtered].sort((a, b) => compareProtocols(a, b, sortOption));
 }

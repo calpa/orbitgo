@@ -15,8 +15,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const INCH_API_URL = "/1inch";
-const INCH_API_KEY = import.meta.env.VITE_1INCH_API_KEY;
+// Using Cloudflare Workers backend
 
 interface ChartDataItem {
   timestamp: number;
@@ -57,18 +56,11 @@ export function ValueChart() {
       await randomDelay(1, 5); // Random delay between 1-5 seconds
 
       const response = await axios.get<ValueChartResponse>(
-        `${INCH_API_URL}/portfolio/portfolio/v4/general/value_chart`,
+        `/portfolio/${address}/value-chart`,
         {
-          headers: {
-            Authorization: `Bearer ${INCH_API_KEY}`,
-            Accept: "application/json",
-          },
           params: {
-            addresses: address,
-            chain_id: 1, // Ethereum mainnet
-            timerange: timerange, // 1 month
-            use_cache: true,
-          },
+            timerange: timerange
+          }
         }
       );
 

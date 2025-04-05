@@ -61,7 +61,7 @@ export interface PortfolioResponse {
   };
 }
 
-interface UnderlyingToken {
+export interface UnderlyingToken {
   chain_id: number;
   address: string;
   name: string;
@@ -72,7 +72,7 @@ interface UnderlyingToken {
   value_usd: number;
 }
 
-interface RewardsToken extends UnderlyingToken {}
+export interface RewardsToken extends UnderlyingToken {}
 
 interface ProtocolInfo {
   profit_abs_usd: number | null;
@@ -121,4 +121,29 @@ export interface PortfolioResponse2 {
       total_time: number;
     };
   };
+}
+
+export interface Chain {
+  id: number;
+  name: string;
+  status: "completed" | "in_progress" | "failed";
+  data: {
+    meta: {
+      system: {
+        click_time: number;
+        node_time: number;
+        microservices_time: number;
+        redis_time: number;
+        total_time: number;
+      };
+    };
+    result: Protocol[];
+  };
+}
+
+// From Cloudflare Worker API
+export interface PorfolioResponse {
+  chains: Chain[];
+  positions: Protocol[];
+  totalValueUsd: number;
 }
