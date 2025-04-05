@@ -15,73 +15,48 @@
 
 </div>
 
-## 🏗️ Architecture
-
-```mermaid
-flowchart TB
-    subgraph Frontend["🖥️ Frontend - React 19"]
-        UI["🎨 UI Components"]
-        Router["🛣️ TanStack Router"]
-        State["📦 State Management"]
-        Web3["🔌 Web3 Integration"]
-    end
-
-    subgraph Backend["☁️ Cloudflare Workers"]
-        Cache["💾 Cache Layer"]
-        RateLimit["🚦 Rate Limiter"]
-        Aggregator["🔄 Data Aggregator"]
-    end
-
-    subgraph Blockchain["⛓️ Blockchain Networks"]
-        ETH["Ethereum"]
-        ARB["Arbitrum"]
-        OP["Optimism"]
-        BSC["BSC"]
-        BASE["Base"]
-    end
-
-    User["👤 User"] --> Frontend
-    Frontend --> Backend
-    Backend --> Blockchain
-    Blockchain --> Backend
-    Backend --> Frontend
-```
-
 ## 🌟 Key Features
 
 ### 🔄 Real-time Portfolio Tracking
+
 - **Cross-chain Monitoring**: Track assets across Ethereum, Arbitrum, Optimism, Base, BSC, Polygon, and more
 - **Protocol-level Analytics**: View positions in DeFi protocols with real-time USD valuations
 - **Historical Performance**: Track portfolio value changes over customizable time periods
 
 ### 📊 Advanced Analytics
+
 - **Chain Distribution**: Visual breakdown of assets across different blockchains
 - **Protocol Allocation**: Interactive charts showing protocol-level distribution
 - **Yield Tracking**: Monitor APR and performance across protocols
 
 ### 💡 Smart Features
+
 - **Permissionless Access**: No registration required, just connect your wallet
 - **Data Export**: Export transaction history and portfolio data to CSV
 - **Real-time Updates**: Automatic data refresh with manual refresh option
 
 ### Data Visualization
+
 - **Protocol Allocation Chart**: Interactive pie chart showing asset distribution across protocols
 - **Total Value Overview**: Real-time summary of total portfolio value and protocol count
 - **Chain Distribution**: Detailed breakdown of assets by blockchain
 - **Custom Filtering**: Filter protocols by chain, value, and other parameters
 
 ### Data Export
+
 - **CSV Export**: Export protocol data with customizable fields
 - **Formatted Data**: Well-structured exports including Protocol, Chain, Value (USD), ROI, and APR
 
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Node.js 18+
 - npm or yarn
 - Ethereum wallet (MetaMask, Rainbow, etc.)
 
 ### Installation
+
 ```bash
 # Clone the repository
 git clone https://github.com/your-username/treasury-management-frontend.git
@@ -98,6 +73,7 @@ npm run dev
 ```
 
 ## 📁 Project Structure
+
 ```
 src/
 ├── components/          # Reusable UI components
@@ -172,6 +148,7 @@ GET /portfolio/:address/value-chart  // Historical value data
 </table>
 
 ### Core
+
 - **Framework**: React 19 with TypeScript
 - **Build Tool**: Vite 6
 - **Styling**: TailwindCSS 4
@@ -179,6 +156,7 @@ GET /portfolio/:address/value-chart  // Historical value data
 - **Routing**: TanStack Router
 
 ### Data & Visualization
+
 - **Charts**: Recharts
 - **Data Grid**: AG Grid
 - **Icons**: Iconify
@@ -186,6 +164,7 @@ GET /portfolio/:address/value-chart  // Historical value data
 - **Web3**: RainbowKit + wagmi v2
 
 ### Development
+
 - **Linting**: ESLint
 - **Formatting**: Prettier
 - **Testing**: Vitest (planned)
@@ -204,13 +183,42 @@ GET /portfolio/:address/value-chart  // Historical value data
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📝 License
+## 🏗️ Architecture
 
-MIT License - see the [LICENSE](LICENSE) file for details
+```mermaid
+flowchart TB
+    subgraph Frontend["🖥️ Frontend - React 19"]
+        UI["🎨 UI Components"]
+        Router["🛣️ TanStack Router"]
+        State["📦 State Management"]
+        Web3["🔌 Web3 Integration"]
+    end
+
+    subgraph Backend["☁️ Cloudflare Workers"]
+        Cache["💾 Cache Layer"]
+        RateLimit["🚦 Rate Limiter"]
+        Aggregator["🔄 Data Aggregator"]
+    end
+
+    subgraph Blockchain["⛓️ Blockchain Networks"]
+        ETH["Ethereum"]
+        ARB["Arbitrum"]
+        OP["Optimism"]
+        BSC["BSC"]
+        BASE["Base"]
+    end
+
+    User["👤 User"] --> Frontend
+    Frontend --> Backend
+    Backend --> Blockchain
+    Blockchain --> Backend
+    Backend --> Frontend
+```
 
 ## 📝 TODO: Future Enhancements
 
 ### Core Features
+
 - [x] Cross-chain portfolio tracking
 - [x] Protocol-level analytics
 - [x] Historical value charts
@@ -218,6 +226,7 @@ MIT License - see the [LICENSE](LICENSE) file for details
 - [ ] Portfolio alerts
 
 ### Analytics & Reporting
+
 - [x] Chain distribution view
 - [x] Protocol allocation charts
 - [x] CSV data export
@@ -225,6 +234,7 @@ MIT License - see the [LICENSE](LICENSE) file for details
 - [ ] Performance benchmarking
 
 ### User Experience
+
 - [ ] Portfolio alerts and notifications
 - [ ] Custom portfolio comparison tools
 - [ ] Enhanced analytics dashboard
