@@ -293,7 +293,7 @@ function RouteComponent() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {protocols.map((protocol: YieldInfo, index: number) => (
+        {sortedProtocols.map((protocol: YieldInfo, index: number) => (
           <div
             key={`${protocol.chain_id}-${protocol.protocol_name}-${protocol.protocol}-${index}`}
             className="transform transition-all duration-300 opacity-0 translate-y-4"

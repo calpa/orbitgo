@@ -35,7 +35,7 @@ function formatDate(timestamp: number) {
 }
 
 export function ValueChart() {
-  const [timerange, setTimerange] = useState("1month");
+  const [timerange, setTimerange] = useState("1year");
   const { address } = useAccount();
 
   const {
