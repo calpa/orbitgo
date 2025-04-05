@@ -6,6 +6,12 @@ export function findChain(chainId: number): ChainItem | undefined {
   return chains.result.find((c) => c.id === chainId);
 }
 
+export function findChainId(chainName: string): number | undefined {
+  return chains.result.find(
+    (c) => c.name.toLocaleLowerCase() === chainName.toLocaleLowerCase()
+  )?.id;
+}
+
 export function getChainName(chainId: number): string {
   const chain = chains.result.find((c) => c.id === chainId);
   return chain?.name || `Chain ${chainId}`;

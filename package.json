@@ -28,6 +28,7 @@
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.55.0",
     "recharts": "^2.15.2",
+    "sweetalert2": "^11.17.2",
     "tailwindcss": "^4.0.17",
     "viem": "^2.23.15",
     "wagmi": "^2.14.15"

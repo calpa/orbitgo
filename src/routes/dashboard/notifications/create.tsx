@@ -3,10 +3,15 @@ import { useMutation } from "@tanstack/react-query";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useAccount } from "wagmi";
 import { Icon } from "@iconify/react";
+import { Link } from "@tanstack/react-router";
 import { createWebhook } from "../../../api/webhooks";
 import { CreateWebhookRequest } from "../../../types/webhooks";
+import { PROTOCOL_NETWORKS } from "../../../constants/networks";
+import { findChainId, getChainIcon } from "../../../utils/chains";
+import Swal from "sweetalert2";
+import { useNavigate } from "@tanstack/react-router";
 
-const FormField = ({ name, label, type = "text", as, children, icon }: any) => (
+const FormField = ({ name, label, type = "text", icon }: any) => (
   <div className="mb-6 relative">
     <label
       htmlFor={name}
@@ -23,7 +28,6 @@ const FormField = ({ name, label, type = "text", as, children, icon }: any) => (
       <Field
         id={name}
         name={name}
-        as={as}
         type={type}
         className={`
           block w-full rounded-lg
@@ -32,19 +36,8 @@ const FormField = ({ name, label, type = "text", as, children, icon }: any) => (
           text-gray-900 text-sm
           focus:ring-blue-500 focus:border-blue-500
           transition-all duration-200
-          ${as === "select" ? "appearance-none" : ""}
         `}
-      >
-        {children}
-      </Field>
-      {as === "select" && (
-        <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-          <Icon
-            icon="heroicons:chevron-down"
-            className="h-5 w-5 text-gray-400"
-          />
-        </div>
-      )}
+      />
     </div>
     <ErrorMessage
       name={name}
@@ -54,89 +47,83 @@ const FormField = ({ name, label, type = "text", as, children, icon }: any) => (
   </div>
 );
 
-function NotificationsComponent() {
-  const { address } = useAccount();
+export const Route = createFileRoute("/dashboard/notifications/create")({
+  component: CreateWebhookComponent,
+});
 
+function CreateWebhookComponent() {
+  const { address } = useAccount();
+  const navigate = useNavigate();
   const { mutate: createWebhookMutation, isPending } = useMutation({
     mutationFn: createWebhook,
-    onSuccess: () => {
-      // Show success toast
+    onSuccess: async () => {
+      // Show success toast and redirect
+      const res = await Swal.fire({
+        icon: "success",
+        title: "Webhook created successfully",
+        showConfirmButton: true,
+        timer: 10000,
+      });
+
+      if (res.isConfirmed || res.isDismissed) {
+        navigate({ to: "/dashboard/notifications" });
+      }
     },
   });
 
-  const initialValues: Partial<CreateWebhookRequest> = {
-    notification: {
-      webhookUrl: "",
-    },
-    eventType: "SUCCESSFUL_TRANSACTION",
-    description: "",
-    condition: {
-      addresses: [address || ""],
-    },
+  const initialValues: CreateWebhookRequest = {
+    addresses: [address || ""],
+    webhookUrl: "",
   };
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
+      <div className="max-w-2xl mx-auto">
+        <div className="flex items-center gap-4 mb-8">
+          <Link
+            to="/dashboard/notifications"
+            className="p-2 text-gray-400 hover:text-gray-500 rounded-lg hover:bg-gray-50"
+          >
+            <Icon icon="heroicons:arrow-left" className="h-6 w-6" />
+          </Link>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Notifications</h1>
-            <p className="mt-2 text-gray-600">
-              Set up webhooks to monitor your portfolio activity
+            <h1 className="text-2xl font-bold text-gray-900">Create Webhook</h1>
+            <p className="text-gray-600">
+              Create all chains notifications (powered by NODIT)
+            </p>
+            <p className="text-gray-600">
+              Protocols:{" "}
+              {Object.keys(PROTOCOL_NETWORKS).map((protocol) => (
+                <div key={protocol} className="inline-flex items-center gap-2">
+                  {getChainIcon(findChainId(protocol) || 0) ? (
+                    <img
+                      src={getChainIcon(findChainId(protocol) || 0)}
+                      alt={protocol}
+                      className="w-5 h-5"
+                    />
+                  ) : (
+                    <span className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center">
+                      {protocol[0].toUpperCase()}
+                    </span>
+                  )}
+                  {protocol[0].toUpperCase() + protocol.slice(1)},{" "}
+                </div>
+              ))}
             </p>
           </div>
-          <Icon icon="heroicons:bell" className="h-8 w-8 text-blue-500" />
         </div>
 
         <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-blue-50 rounded-lg">
-              <Icon icon="heroicons:plus" className="h-6 w-6 text-blue-600" />
-            </div>
-            <h2 className="text-xl font-semibold text-gray-900">
-              Create New Webhook
-            </h2>
-          </div>
-
           <Formik
             initialValues={initialValues}
             onSubmit={(values) => createWebhookMutation(values)}
           >
             <Form className="space-y-6">
               <FormField
-                name="notification.webhookUrl"
+                name="webhookUrl"
                 label="Webhook URL"
                 type="url"
                 icon="heroicons:link"
-              />
-
-              <FormField
-                name="eventType"
-                label="Event Type"
-                as="select"
-                icon="heroicons:bell-alert"
-              >
-                <option value="SUCCESSFUL_TRANSACTION">
-                  Successful Transaction
-                </option>
-                <option value="FAILED_TRANSACTION">Failed Transaction</option>
-                <option value="TOKEN_TRANSFER">Token Transfer</option>
-                <option value="ADDRESS_ACTIVITY">Address Activity</option>
-                <option value="MINED_TRANSACTION">Mined Transaction</option>
-                <option value="BELOW_THRESHOLD_BALANCE">
-                  Below Threshold Balance
-                </option>
-                <option value="BLOCK_PERIOD">Block Period</option>
-                <option value="BLOCK_LIST_CALLER">Block List Caller</option>
-                <option value="ALLOW_LIST_CALLER">Allow List Caller</option>
-                <option value="LOG">Log</option>
-                <option value="EVENT">Event</option>
-              </FormField>
-
-              <FormField
-                name="description"
-                label="Description (Optional)"
-                icon="heroicons:document-text"
               />
 
               <div className="pt-4">
@@ -178,7 +165,3 @@ function NotificationsComponent() {
     </div>
   );
 }
-
-export const Route = createFileRoute("/dashboard/notifications/create")({
-  component: NotificationsComponent,
-});

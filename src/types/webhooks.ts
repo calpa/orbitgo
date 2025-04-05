@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { PROTOCOL_NETWORKS } from "../constants/networks";
 
+// Protocol schema
 export const protocolSchema = z
   .enum([
     "ethereum",
@@ -24,6 +25,7 @@ export const networkSchema = z
   .enum(allNetworks as unknown as [string, ...string[]])
   .default("mainnet");
 
+// Event type schema
 export const eventTypeSchema = z.enum([
   "ADDRESS_ACTIVITY",
   "MINED_TRANSACTION",
@@ -38,98 +40,44 @@ export const eventTypeSchema = z.enum([
   "EVENT",
 ]);
 
-export const webhookSchema = z.object({
-  address: z.string(),
+// Basic types
+export type Protocol = z.infer<typeof protocolSchema>;
+export type Network = z.infer<typeof networkSchema>;
+export type EventType = z.infer<typeof eventTypeSchema>;
+
+// Schema for creating a new webhook
+export const createWebhookSchema = z.object({
+  addresses: z.array(z.string()),
   webhookUrl: z.string().url(),
-  eventType: eventTypeSchema,
-  description: z.string().optional(),
-  subscriptionId: z.string().optional(),
 });
 
-export const createWebhookResponseSchema = z.object({
-  message: z.string(),
-  subscription: z.object({
-    subscriptionId: z.string(),
-    description: z.string(),
-    eventType: eventTypeSchema,
-    notification: z.object({
-      webhookUrl: z.string().url(),
-    }),
-    createdAt: z.string(),
-  }),
-});
+export type CreateWebhookRequest = z.infer<typeof createWebhookSchema>;
 
-export const webhookNotificationSchema = z.object({
-  webhookUrl: z.string().url(),
-  signingKey: z.string().optional(),
-});
-
-export const webhookConditionSchema = z
-  .object({
-    addresses: z.array(z.string().regex(/^0x[a-fA-F0-9]{40}$/)),
-  })
-  .passthrough();
-
-export const createWebhookRequestSchema = z
-  .object({
-    protocol: protocolSchema,
-    network: networkSchema,
-    eventType: eventTypeSchema.optional().default("SUCCESSFUL_TRANSACTION"),
-    description: z
-      .string()
-      .optional()
-      .default("Webhook for successful transaction"),
-    notification: webhookNotificationSchema,
-    condition: webhookConditionSchema.default({
-      addresses: ["0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"],
-    }),
-  })
-  .superRefine((data, ctx) => {
-    const validNetworks = PROTOCOL_NETWORKS[data.protocol];
-    if (!validNetworks?.includes(data.network)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["network"],
-        message:
-          `Network '${data.network}' is not supported for protocol '${data.protocol}'. ` +
-          `Supported networks are: ${validNetworks?.join(", ")}`,
-      });
-      return z.NEVER;
-    }
-  });
-
+// Schema for webhook response
 export const webhookResponseSchema = z.object({
-  subscriptionId: z.string().uuid(),
-  description: z.string(),
-  protocol: protocolSchema,
-  network: networkSchema,
-  eventType: eventTypeSchema,
-  notification: webhookNotificationSchema,
-  signingKey: z.string(),
-  createdAt: z.string().datetime(),
-  condition: webhookConditionSchema,
+  id: z.string(),
+  addresses: z.array(z.string()),
+  webhookUrl: z.string().url(),
+  createdAt: z.string(),
 });
 
+export type WebhookResponse = z.infer<typeof webhookResponseSchema>;
+
+// Schema for list of webhooks
+export const webhookListSchema = z.object({
+  webhooks: z.array(webhookResponseSchema),
+});
+
+export type WebhookList = z.infer<typeof webhookListSchema>;
+
+// Schema for error responses
 export const errorResponseSchema = z.object({
   code: z.string(),
   message: z.string(),
 });
 
-// Infer types from schemas
-export type Protocol = z.infer<typeof protocolSchema>;
-export type Network = z.infer<typeof networkSchema>;
-export type EventType = z.infer<typeof eventTypeSchema>;
-export type WebhookNotification = z.infer<typeof webhookNotificationSchema>;
-export type WebhookCondition = z.infer<typeof webhookConditionSchema>;
-export type CreateWebhookRequest = z.infer<typeof createWebhookRequestSchema>;
-export type WebhookResponse = z.infer<typeof webhookResponseSchema>;
+export type ErrorResponse = z.infer<typeof errorResponseSchema>;
 
 export interface StoredWebhook extends WebhookResponse {
   addresses: string[];
 }
-
-export interface WebhookList {
-  webhooks: StoredWebhook[];
-  lastUpdated: string;
-}
-export type ErrorResponse = z.infer<typeof errorResponseSchema>;

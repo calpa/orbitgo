@@ -1,19 +1,11 @@
+import axios from "axios";
 import { CreateWebhookRequest, WebhookResponse } from "../types/webhooks";
 
-const BASE_URL = "https://treasury-management-backend.calpa.workers.dev/webhooks";
+const CREATE_WEBHOOK_URL = `${import.meta.env.VITE_API_URL}/webhook`;
 
-export async function createWebhook(webhook: Partial<CreateWebhookRequest>): Promise<WebhookResponse> {
-  const response = await fetch(BASE_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(webhook),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to create webhook");
-  }
-
-  return response.json();
+export async function createWebhook(
+  webhook: Partial<CreateWebhookRequest>
+): Promise<WebhookResponse> {
+  const response = await axios.post(CREATE_WEBHOOK_URL, webhook);
+  return response.data;
 }
