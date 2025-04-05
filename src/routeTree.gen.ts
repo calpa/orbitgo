@@ -20,6 +20,8 @@ import { Route as DashboardTransactionsImport } from './routes/dashboard/transac
 import { Route as DashboardSendImport } from './routes/dashboard/send'
 import { Route as DashboardNotificationsImport } from './routes/dashboard/notifications'
 import { Route as DashboardChainsImport } from './routes/dashboard/chains'
+import { Route as DashboardNotificationsIndexImport } from './routes/dashboard/notifications/index'
+import { Route as DashboardNotificationsCreateImport } from './routes/dashboard/notifications/create'
 
 // Create/Update Routes
 
@@ -76,6 +78,20 @@ const DashboardChainsRoute = DashboardChainsImport.update({
   path: '/chains',
   getParentRoute: () => DashboardRoute,
 } as any)
+
+const DashboardNotificationsIndexRoute =
+  DashboardNotificationsIndexImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => DashboardNotificationsRoute,
+  } as any)
+
+const DashboardNotificationsCreateRoute =
+  DashboardNotificationsCreateImport.update({
+    id: '/create',
+    path: '/create',
+    getParentRoute: () => DashboardNotificationsRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -144,14 +160,44 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexImport
       parentRoute: typeof DashboardImport
     }
+    '/dashboard/notifications/create': {
+      id: '/dashboard/notifications/create'
+      path: '/create'
+      fullPath: '/dashboard/notifications/create'
+      preLoaderRoute: typeof DashboardNotificationsCreateImport
+      parentRoute: typeof DashboardNotificationsImport
+    }
+    '/dashboard/notifications/': {
+      id: '/dashboard/notifications/'
+      path: '/'
+      fullPath: '/dashboard/notifications/'
+      preLoaderRoute: typeof DashboardNotificationsIndexImport
+      parentRoute: typeof DashboardNotificationsImport
+    }
   }
 }
 
 // Create and export the route tree
 
+interface DashboardNotificationsRouteChildren {
+  DashboardNotificationsCreateRoute: typeof DashboardNotificationsCreateRoute
+  DashboardNotificationsIndexRoute: typeof DashboardNotificationsIndexRoute
+}
+
+const DashboardNotificationsRouteChildren: DashboardNotificationsRouteChildren =
+  {
+    DashboardNotificationsCreateRoute: DashboardNotificationsCreateRoute,
+    DashboardNotificationsIndexRoute: DashboardNotificationsIndexRoute,
+  }
+
+const DashboardNotificationsRouteWithChildren =
+  DashboardNotificationsRoute._addFileChildren(
+    DashboardNotificationsRouteChildren,
+  )
+
 interface DashboardRouteChildren {
   DashboardChainsRoute: typeof DashboardChainsRoute
-  DashboardNotificationsRoute: typeof DashboardNotificationsRoute
+  DashboardNotificationsRoute: typeof DashboardNotificationsRouteWithChildren
   DashboardSendRoute: typeof DashboardSendRoute
   DashboardTransactionsRoute: typeof DashboardTransactionsRoute
   DashboardYieldsRoute: typeof DashboardYieldsRoute
@@ -160,7 +206,7 @@ interface DashboardRouteChildren {
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardChainsRoute: DashboardChainsRoute,
-  DashboardNotificationsRoute: DashboardNotificationsRoute,
+  DashboardNotificationsRoute: DashboardNotificationsRouteWithChildren,
   DashboardSendRoute: DashboardSendRoute,
   DashboardTransactionsRoute: DashboardTransactionsRoute,
   DashboardYieldsRoute: DashboardYieldsRoute,
@@ -176,22 +222,25 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/dashboard/chains': typeof DashboardChainsRoute
-  '/dashboard/notifications': typeof DashboardNotificationsRoute
+  '/dashboard/notifications': typeof DashboardNotificationsRouteWithChildren
   '/dashboard/send': typeof DashboardSendRoute
   '/dashboard/transactions': typeof DashboardTransactionsRoute
   '/dashboard/yields': typeof DashboardYieldsRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/notifications/create': typeof DashboardNotificationsCreateRoute
+  '/dashboard/notifications/': typeof DashboardNotificationsIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/dashboard/chains': typeof DashboardChainsRoute
-  '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/send': typeof DashboardSendRoute
   '/dashboard/transactions': typeof DashboardTransactionsRoute
   '/dashboard/yields': typeof DashboardYieldsRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/dashboard/notifications/create': typeof DashboardNotificationsCreateRoute
+  '/dashboard/notifications': typeof DashboardNotificationsIndexRoute
 }
 
 export interface FileRoutesById {
@@ -200,11 +249,13 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/dashboard/chains': typeof DashboardChainsRoute
-  '/dashboard/notifications': typeof DashboardNotificationsRoute
+  '/dashboard/notifications': typeof DashboardNotificationsRouteWithChildren
   '/dashboard/send': typeof DashboardSendRoute
   '/dashboard/transactions': typeof DashboardTransactionsRoute
   '/dashboard/yields': typeof DashboardYieldsRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/notifications/create': typeof DashboardNotificationsCreateRoute
+  '/dashboard/notifications/': typeof DashboardNotificationsIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -219,16 +270,19 @@ export interface FileRouteTypes {
     | '/dashboard/transactions'
     | '/dashboard/yields'
     | '/dashboard/'
+    | '/dashboard/notifications/create'
+    | '/dashboard/notifications/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/dashboard/chains'
-    | '/dashboard/notifications'
     | '/dashboard/send'
     | '/dashboard/transactions'
     | '/dashboard/yields'
     | '/dashboard'
+    | '/dashboard/notifications/create'
+    | '/dashboard/notifications'
   id:
     | '__root__'
     | '/'
@@ -240,6 +294,8 @@ export interface FileRouteTypes {
     | '/dashboard/transactions'
     | '/dashboard/yields'
     | '/dashboard/'
+    | '/dashboard/notifications/create'
+    | '/dashboard/notifications/'
   fileRoutesById: FileRoutesById
 }
 
@@ -293,7 +349,11 @@ export const routeTree = rootRoute
     },
     "/dashboard/notifications": {
       "filePath": "dashboard/notifications.tsx",
-      "parent": "/dashboard"
+      "parent": "/dashboard",
+      "children": [
+        "/dashboard/notifications/create",
+        "/dashboard/notifications/"
+      ]
     },
     "/dashboard/send": {
       "filePath": "dashboard/send.tsx",
@@ -310,6 +370,14 @@ export const routeTree = rootRoute
     "/dashboard/": {
       "filePath": "dashboard/index.tsx",
       "parent": "/dashboard"
+    },
+    "/dashboard/notifications/create": {
+      "filePath": "dashboard/notifications/create.tsx",
+      "parent": "/dashboard/notifications"
+    },
+    "/dashboard/notifications/": {
+      "filePath": "dashboard/notifications/index.tsx",
+      "parent": "/dashboard/notifications"
     }
   }
 }
