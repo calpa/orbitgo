@@ -1,33 +1,68 @@
-# OrbitGO Treasury Management Frontend
+<div align="center">
 
-💼 A modern DeFi treasury dashboard powered by the [1inch Portfolio API](https://portal.1inch.dev/documentation/apis/portfolio), providing real-time portfolio tracking and analytics across multiple chains and protocols.
+# 🛸 OrbitGO
 
-## 🔥 1inch Portfolio API Integration
+#### Multichain Treasury Dashboard
 
-OrbitGO leverages the powerful 1inch Portfolio API to deliver comprehensive treasury management capabilities:
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Made by Calpa Liu](https://img.shields.io/badge/Made%20by-Calpa%20Liu-blue)](https://github.com/calpa)
 
-### Real-time Portfolio Tracking
-- Cross-chain portfolio monitoring across 10+ networks
-- Protocol-level position tracking with accurate USD valuations
-- Automatic ROI and APR calculations
+🚀 A permissionless, plug-and-play multichain treasury dashboard for Web3 treasury managers.
 
-### Data Aggregation
-- Unified view of positions across all supported chains
-- Protocol categorization and filtering
-- Real-time portfolio value updates
+📊 Real-time visualizations · 💰 Yield tracking · ⛓️ Cross-chain insights
 
-### Performance Analytics
-- Protocol-specific ROI tracking
-- Chain-based portfolio distribution analysis
-- Historical value tracking with custom date ranges
+[Getting Started](#-getting-started) · [Features](#-key-features) · [Documentation](#-documentation) · [Contributing](#-contributing)
 
-## 🌟 Features
+</div>
 
-### Portfolio Management
-- **Multi-Chain Support**: Track assets across 10+ major chains including Ethereum, BSC, Polygon, Arbitrum, Optimism, Base, and more
-- **Protocol Integration**: View positions in various DeFi protocols with real-time value updates
-- **Zero-Value Filtering**: Option to hide protocols with $0 total value
-- **Sorting Options**: Sort by value, ROI, APR, and other key metrics
+## 🏗️ Architecture
+
+```mermaid
+flowchart TB
+    subgraph Frontend["🖥️ Frontend - React 19"]
+        UI["🎨 UI Components"]
+        Router["🛣️ TanStack Router"]
+        State["📦 State Management"]
+        Web3["🔌 Web3 Integration"]
+    end
+
+    subgraph Backend["☁️ Cloudflare Workers"]
+        Cache["💾 Cache Layer"]
+        RateLimit["🚦 Rate Limiter"]
+        Aggregator["🔄 Data Aggregator"]
+    end
+
+    subgraph Blockchain["⛓️ Blockchain Networks"]
+        ETH["Ethereum"]
+        ARB["Arbitrum"]
+        OP["Optimism"]
+        BSC["BSC"]
+        BASE["Base"]
+    end
+
+    User["👤 User"] --> Frontend
+    Frontend --> Backend
+    Backend --> Blockchain
+    Blockchain --> Backend
+    Backend --> Frontend
+```
+
+## 🌟 Key Features
+
+### 🔄 Real-time Portfolio Tracking
+- **Cross-chain Monitoring**: Track assets across Ethereum, Arbitrum, Optimism, Base, BSC, Polygon, and more
+- **Protocol-level Analytics**: View positions in DeFi protocols with real-time USD valuations
+- **Historical Performance**: Track portfolio value changes over customizable time periods
+
+### 📊 Advanced Analytics
+- **Chain Distribution**: Visual breakdown of assets across different blockchains
+- **Protocol Allocation**: Interactive charts showing protocol-level distribution
+- **Yield Tracking**: Monitor APR and performance across protocols
+
+### 💡 Smart Features
+- **Permissionless Access**: No registration required, just connect your wallet
+- **Data Export**: Export transaction history and portfolio data to CSV
+- **Real-time Updates**: Automatic data refresh with manual refresh option
 
 ### Data Visualization
 - **Protocol Allocation Chart**: Interactive pie chart showing asset distribution across protocols
@@ -44,7 +79,7 @@ OrbitGO leverages the powerful 1inch Portfolio API to deliver comprehensive trea
 ### Prerequisites
 - Node.js 18+
 - npm or yarn
-- 1inch API key
+- Ethereum wallet (MetaMask, Rainbow, etc.)
 
 ### Installation
 ```bash
@@ -79,43 +114,76 @@ src/
 └── types.ts           # TypeScript type definitions
 ```
 
-## 🔌 API Integration
+## 🔌 Backend Integration
 
-### Portfolio Overview Endpoint
+OrbitGO uses Cloudflare Workers as the API backend:
+
 ```typescript
-GET /portfolio/v4/overview/protocols/current_value
+// Base URL
+const BASE_URL = 'https://treasury-management-backend.calpa.workers.dev'
 
-// Headers
-Authorization: Bearer ${VITE_1INCH_API_KEY}
+// Key Endpoints
+GET /portfolio/:address         // Portfolio overview
+GET /portfolio/:address/value-chart  // Historical value data
 
-// Response Type
-interface PortfolioResponse2 {
-  result: Protocol[];
-}
-
-interface Protocol {
-  chain_id: number;
-  name: string;
-  value_usd: number;
-  roi?: number;
-  info: {
-    weighted_apr: number;
-  };
-}
+// Features
+- Rate limiting
+- Response caching
+- Cross-chain data aggregation
 ```
 
 ## 🛠️ Tech Stack
 
+<table>
+  <tr>
+    <th>Category</th>
+    <th>Technologies</th>
+  </tr>
+  <tr>
+    <td>Core</td>
+    <td>
+      <img src="https://img.shields.io/badge/React_19-61DAFB?style=flat&logo=react&logoColor=black" />
+      <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white" />
+      <img src="https://img.shields.io/badge/Vite_6-646CFF?style=flat&logo=vite&logoColor=white" />
+    </td>
+  </tr>
+  <tr>
+    <td>Styling</td>
+    <td>
+      <img src="https://img.shields.io/badge/TailwindCSS_4-38B2AC?style=flat&logo=tailwind-css&logoColor=white" />
+      <img src="https://img.shields.io/badge/Framer_Motion-0055FF?style=flat&logo=framer&logoColor=white" />
+    </td>
+  </tr>
+  <tr>
+    <td>State & Data</td>
+    <td>
+      <img src="https://img.shields.io/badge/TanStack_Query-FF4154?style=flat&logo=react-query&logoColor=white" />
+      <img src="https://img.shields.io/badge/Jotai-000000?style=flat" />
+      <img src="https://img.shields.io/badge/AG_Grid-000000?style=flat" />
+    </td>
+  </tr>
+  <tr>
+    <td>Web3</td>
+    <td>
+      <img src="https://img.shields.io/badge/wagmi_v2-35374C?style=flat" />
+      <img src="https://img.shields.io/badge/RainbowKit-032463?style=flat" />
+    </td>
+  </tr>
+</table>
+
 ### Core
-- **Framework**: React 18 with TypeScript
-- **Build Tool**: Vite
-- **Styling**: TailwindCSS
-- **State Management**: React Query
+- **Framework**: React 19 with TypeScript
+- **Build Tool**: Vite 6
+- **Styling**: TailwindCSS 4
+- **State Management**: TanStack Query + Jotai
+- **Routing**: TanStack Router
 
 ### Data & Visualization
 - **Charts**: Recharts
-- **Data Fetching**: Axios
-- **Web3**: RainbowKit + wagmi
+- **Data Grid**: AG Grid
+- **Icons**: Iconify
+- **Animations**: Framer Motion
+- **Web3**: RainbowKit + wagmi v2
 
 ### Development
 - **Linting**: ESLint
@@ -142,17 +210,19 @@ MIT License - see the [LICENSE](LICENSE) file for details
 
 ## 📝 TODO: Future Enhancements
 
-### Portfolio API Extensions
-- [ ] Implement historical performance tracking
-- [ ] Add profit/loss calculations per protocol
-- [ ] Include token-level portfolio breakdown
-- [ ] Add portfolio performance charts
+### Core Features
+- [x] Cross-chain portfolio tracking
+- [x] Protocol-level analytics
+- [x] Historical value charts
+- [ ] Token-level breakdown
+- [ ] Portfolio alerts
 
-### Additional 1inch API Integrations
-- [ ] Token prices API for detailed valuations
-- [ ] Transaction history for activity tracking
-- [ ] Wallet balances API integration
-- [ ] Fusion+ integration for cross-chain operations
+### Analytics & Reporting
+- [x] Chain distribution view
+- [x] Protocol allocation charts
+- [x] CSV data export
+- [ ] Custom date range analytics
+- [ ] Performance benchmarking
 
 ### User Experience
 - [ ] Portfolio alerts and notifications
@@ -170,4 +240,6 @@ MIT License - see the [LICENSE](LICENSE) file for details
 
 ## 📝 License
 
-MIT License © 2025 OrbitGO
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+Copyright (c) 2025 Calpa Liu
