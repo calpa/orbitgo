@@ -6,7 +6,6 @@ import { mainnet, polygon, optimism, arbitrum, base } from "wagmi/chains";
 import { Provider as JotaiProvider } from "jotai";
 import "@rainbow-me/rainbowkit/styles.css";
 import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
 
 // Create a new QueryClient instance
 const queryClient = new QueryClient();
@@ -37,9 +36,6 @@ function RootLayout() {
           <RainbowKitProvider>
             <Navbar />
             <div className="flex w-full">
-              <div className="w-64 flex-shrink-0">
-                <Sidebar />
-              </div>
               <div className="flex-grow">
                 <Outlet />
               </div>

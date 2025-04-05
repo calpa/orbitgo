@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import chainData from "../../constants/chains.json";
 
-export const Route = createFileRoute("/chains/")({
+export const Route = createFileRoute("/dashboard/chains")({
   component: ChainsPage,
 });
 

@@ -37,7 +37,7 @@ function Sidebar() {
             Yields
           </Link>
           <Link
-            to="/chains"
+            to="/dashboard/chains"
             className="text-xl font-bold"
             activeProps={{
               className: "text-red-500",

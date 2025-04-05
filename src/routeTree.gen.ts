@@ -14,12 +14,11 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as DashboardImport } from './routes/dashboard'
 import { Route as AboutImport } from './routes/about'
 import { Route as IndexImport } from './routes/index'
-import { Route as DashboardIndexImport } from './routes/dashboard/index'
-import { Route as ChainsIndexImport } from './routes/chains/index'
 import { Route as DashboardYieldsImport } from './routes/dashboard/yields'
 import { Route as DashboardTransactionsImport } from './routes/dashboard/transactions'
 import { Route as DashboardSendImport } from './routes/dashboard/send'
 import { Route as DashboardNotificationsImport } from './routes/dashboard/notifications'
+import { Route as DashboardChainsImport } from './routes/dashboard/chains'
 
 // Create/Update Routes
 
@@ -38,18 +37,6 @@ const AboutRoute = AboutImport.update({
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const DashboardIndexRoute = DashboardIndexImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => DashboardRoute,
-} as any)
-
-const ChainsIndexRoute = ChainsIndexImport.update({
-  id: '/chains/',
-  path: '/chains/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -77,6 +64,12 @@ const DashboardNotificationsRoute = DashboardNotificationsImport.update({
   getParentRoute: () => DashboardRoute,
 } as any)
 
+const DashboardChainsRoute = DashboardChainsImport.update({
+  id: '/chains',
+  path: '/chains',
+  getParentRoute: () => DashboardRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -101,6 +94,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardImport
       parentRoute: typeof rootRoute
+    }
+    '/dashboard/chains': {
+      id: '/dashboard/chains'
+      path: '/chains'
+      fullPath: '/dashboard/chains'
+      preLoaderRoute: typeof DashboardChainsImport
+      parentRoute: typeof DashboardImport
     }
     '/dashboard/notifications': {
       id: '/dashboard/notifications'
@@ -130,39 +130,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardYieldsImport
       parentRoute: typeof DashboardImport
     }
-    '/chains/': {
-      id: '/chains/'
-      path: '/chains'
-      fullPath: '/chains'
-      preLoaderRoute: typeof ChainsIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/dashboard/': {
-      id: '/dashboard/'
-      path: '/'
-      fullPath: '/dashboard/'
-      preLoaderRoute: typeof DashboardIndexImport
-      parentRoute: typeof DashboardImport
-    }
   }
 }
 
 // Create and export the route tree
 
 interface DashboardRouteChildren {
+  DashboardChainsRoute: typeof DashboardChainsRoute
   DashboardNotificationsRoute: typeof DashboardNotificationsRoute
   DashboardSendRoute: typeof DashboardSendRoute
   DashboardTransactionsRoute: typeof DashboardTransactionsRoute
   DashboardYieldsRoute: typeof DashboardYieldsRoute
-  DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardChainsRoute: DashboardChainsRoute,
   DashboardNotificationsRoute: DashboardNotificationsRoute,
   DashboardSendRoute: DashboardSendRoute,
   DashboardTransactionsRoute: DashboardTransactionsRoute,
   DashboardYieldsRoute: DashboardYieldsRoute,
-  DashboardIndexRoute: DashboardIndexRoute,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
@@ -173,23 +159,22 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/dashboard/chains': typeof DashboardChainsRoute
   '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/send': typeof DashboardSendRoute
   '/dashboard/transactions': typeof DashboardTransactionsRoute
   '/dashboard/yields': typeof DashboardYieldsRoute
-  '/chains': typeof ChainsIndexRoute
-  '/dashboard/': typeof DashboardIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/dashboard': typeof DashboardRouteWithChildren
+  '/dashboard/chains': typeof DashboardChainsRoute
   '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/send': typeof DashboardSendRoute
   '/dashboard/transactions': typeof DashboardTransactionsRoute
   '/dashboard/yields': typeof DashboardYieldsRoute
-  '/chains': typeof ChainsIndexRoute
-  '/dashboard': typeof DashboardIndexRoute
 }
 
 export interface FileRoutesById {
@@ -197,12 +182,11 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/dashboard/chains': typeof DashboardChainsRoute
   '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/send': typeof DashboardSendRoute
   '/dashboard/transactions': typeof DashboardTransactionsRoute
   '/dashboard/yields': typeof DashboardYieldsRoute
-  '/chains/': typeof ChainsIndexRoute
-  '/dashboard/': typeof DashboardIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -211,33 +195,31 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/dashboard'
+    | '/dashboard/chains'
     | '/dashboard/notifications'
     | '/dashboard/send'
     | '/dashboard/transactions'
     | '/dashboard/yields'
-    | '/chains'
-    | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/dashboard'
+    | '/dashboard/chains'
     | '/dashboard/notifications'
     | '/dashboard/send'
     | '/dashboard/transactions'
     | '/dashboard/yields'
-    | '/chains'
-    | '/dashboard'
   id:
     | '__root__'
     | '/'
     | '/about'
     | '/dashboard'
+    | '/dashboard/chains'
     | '/dashboard/notifications'
     | '/dashboard/send'
     | '/dashboard/transactions'
     | '/dashboard/yields'
-    | '/chains/'
-    | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
 
@@ -245,14 +227,12 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   DashboardRoute: typeof DashboardRouteWithChildren
-  ChainsIndexRoute: typeof ChainsIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   DashboardRoute: DashboardRouteWithChildren,
-  ChainsIndexRoute: ChainsIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -267,8 +247,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/about",
-        "/dashboard",
-        "/chains/"
+        "/dashboard"
       ]
     },
     "/": {
@@ -280,12 +259,16 @@ export const routeTree = rootRoute
     "/dashboard": {
       "filePath": "dashboard.tsx",
       "children": [
+        "/dashboard/chains",
         "/dashboard/notifications",
         "/dashboard/send",
         "/dashboard/transactions",
-        "/dashboard/yields",
-        "/dashboard/"
+        "/dashboard/yields"
       ]
+    },
+    "/dashboard/chains": {
+      "filePath": "dashboard/chains.tsx",
+      "parent": "/dashboard"
     },
     "/dashboard/notifications": {
       "filePath": "dashboard/notifications.tsx",
@@ -301,13 +284,6 @@ export const routeTree = rootRoute
     },
     "/dashboard/yields": {
       "filePath": "dashboard/yields.tsx",
-      "parent": "/dashboard"
-    },
-    "/chains/": {
-      "filePath": "chains/index.tsx"
-    },
-    "/dashboard/": {
-      "filePath": "dashboard/index.tsx",
       "parent": "/dashboard"
     }
   }
