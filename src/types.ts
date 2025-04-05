@@ -123,6 +123,40 @@ export interface PortfolioResponse2 {
   };
 }
 
+export type Transaction = {
+  timeMs: number;
+  address: string;
+  type: number;
+  rating: string;
+  direction: "in" | "out";
+  details: {
+    txHash: string;
+    chainId: number;
+    blockNumber: number;
+    blockTimeSec: number;
+    status: string;
+    type: string;
+    tokenActions: Array<{
+      chainId: string;
+      address: string;
+      standard: string;
+      fromAddress: string;
+      toAddress: string;
+      amount: string;
+      direction: string;
+      priceToUsd?: number;
+    }>;
+    fromAddress: string;
+    toAddress: string;
+    nonce: number;
+    orderInBlock: number;
+    feeInSmallestNative: string;
+    nativeTokenPriceToUsd: number | null;
+  };
+  id: string;
+  eventOrderInTransaction: number;
+};
+
 export interface Chain {
   id: number;
   name: string;

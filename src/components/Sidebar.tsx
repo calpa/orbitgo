@@ -14,11 +14,11 @@ function Sidebar() {
           </Link>
           {/* Notifications */}
           <Link
-            to="/dashboard/notifications"
+            to="/dashboard/transactions"
             className="text-xl font-bold"
             activeProps={{ className: "text-red-500" }}
           >
-            Notifications
+            Transactions
           </Link>
           {/* Yields */}
           <Link
