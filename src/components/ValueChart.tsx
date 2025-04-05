@@ -122,7 +122,7 @@ export function ValueChart(props: ValueChartProps) {
               </div>
             </div>
             <button
-              className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition-colors"
+              className="px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 transition-colors"
               onClick={() => refetch()}
             >
               Refresh

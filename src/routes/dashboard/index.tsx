@@ -87,6 +87,12 @@ function DashboardPage() {
                   key={chainId}
                   chain={findChain(parseInt(chainId))!}
                   value_usd={results[results.length - 1]?.value_usd}
+                  twentyfour_hour_change={
+                    ((results[results.length - 1]?.value_usd -
+                      results[results.length - 2]?.value_usd) /
+                      results[results.length - 2]?.value_usd) *
+                    100
+                  }
                 />
               )
             )}

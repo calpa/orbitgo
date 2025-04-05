@@ -3,6 +3,7 @@ import type { ChainItem } from "../types";
 interface BalanceCardProps {
   chain: ChainItem;
   value_usd: number;
+  twentyfour_hour_change: number;
 }
 
 const chainColors: Record<string, string> = {
@@ -18,7 +19,11 @@ const chainColors: Record<string, string> = {
   Linea: "#ffd900",
 };
 
-export function BalanceCard({ chain, value_usd }: BalanceCardProps) {
+export function BalanceCard({
+  chain,
+  value_usd,
+  twentyfour_hour_change,
+}: BalanceCardProps) {
   const chainColor = chainColors[chain.name] ?? "#CBD5E1"; // fallback 淺灰藍
 
   return (
@@ -55,7 +60,11 @@ export function BalanceCard({ chain, value_usd }: BalanceCardProps) {
         </div>
         <div className="rounded-md bg-gray-50 dark:bg-gray-800 px-4 py-3">
           <h5 className="text-xs text-gray-500 mb-1">24h Change</h5>
-          <p className="text-md font-semibold text-green-500">+5.2%</p>
+          <p
+            className={`${twentyfour_hour_change > 0 ? "text-green-500" : "text-red-500"} text-md font-semibold`}
+          >
+            {twentyfour_hour_change.toFixed(2)}%
+          </p>
         </div>
       </div>
     </div>
