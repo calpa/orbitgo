@@ -10,8 +10,8 @@ export const protocolSchema = z
     "optimism",
     "polygon",
     "kaia",
-    "luniverse",
-    "aptos",
+    // "luniverse",
+    // "aptos",
   ])
   .default("ethereum");
 
@@ -64,9 +64,7 @@ export const webhookResponseSchema = z.object({
 export type WebhookResponse = z.infer<typeof webhookResponseSchema>;
 
 // Schema for list of webhooks
-export const webhookListSchema = z.object({
-  webhooks: z.array(webhookResponseSchema),
-});
+export const webhookListSchema = z.array(webhookResponseSchema);
 
 export type WebhookList = z.infer<typeof webhookListSchema>;
 

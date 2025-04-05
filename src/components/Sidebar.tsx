@@ -43,7 +43,7 @@ function Sidebar() {
               className: "text-red-500",
             }}
           >
-            Supported Chains
+            Token Terminal
           </Link>
         </div>
       </div>

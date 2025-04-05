@@ -1,4 +1,6 @@
+import { Link } from "@tanstack/react-router";
 import type { ChainItem } from "../types";
+import { findChainId } from "../utils/chains";
 
 interface BalanceCardProps {
   chain: ChainItem;
@@ -27,7 +29,11 @@ export function BalanceCard({
   const chainColor = chainColors[chain.name] ?? "#CBD5E1"; // fallback 淺灰藍
 
   return (
-    <div className="rounded-xl p-5 bg-white/90 dark:bg-gray-900/70 transition-all duration-300 border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:scale-[1.02]">
+    <Link
+      to="/dashboard/chains/$chainId"
+      params={{ chainId: String(findChainId(chain.name)) }}
+      className="rounded-xl p-5 bg-white/90 dark:bg-gray-900/70 transition-all duration-300 border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:scale-[1.02]"
+    >
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
         <span
@@ -67,6 +73,6 @@ export function BalanceCard({
           </p>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

@@ -1,20 +1,23 @@
-import { Protocol } from '../types/webhook';
+import { Protocol } from "../types/webhooks";
 
 export const PROTOCOL_NETWORKS: Record<Protocol, string[]> = {
-  aptos: ['mainnet', 'testnet'],
-  arbitrum: ['mainnet', 'sepolia'],
-  base: ['mainnet', 'sepolia'],
-  ethereum: ['mainnet', 'sepolia', 'holesky'],
-  kaia: ['mainnet', 'kairos'],
-  optimism: ['mainnet', 'sepolia'],
-  polygon: ['mainnet', 'amoy'],
-  luniverse: ['mainnet']
+  // aptos: ["mainnet"],
+  arbitrum: ["mainnet"],
+  base: ["mainnet"],
+  ethereum: ["mainnet"],
+  kaia: ["mainnet"],
+  optimism: ["mainnet"],
+  polygon: ["mainnet"],
+  // luniverse: ['mainnet']
 } as const;
 
 export function getValidNetworksForProtocol(protocol: Protocol): string[] {
   return PROTOCOL_NETWORKS[protocol] || [];
 }
 
-export function isValidNetworkForProtocol(protocol: Protocol, network: string): boolean {
+export function isValidNetworkForProtocol(
+  protocol: Protocol,
+  network: string
+): boolean {
   return PROTOCOL_NETWORKS[protocol]?.includes(network) || false;
 }

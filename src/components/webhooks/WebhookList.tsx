@@ -12,34 +12,14 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 
 import { ColDef, ValueFormatterParams } from "ag-grid-community";
 import { getChainIcon, findChainId } from "../../utils/chains";
+import { useEffect } from "react";
 
-async function fetchWebhooks(): Promise<WebhookListType> {
+async function fetchWebhooks(address: string): Promise<WebhookListType> {
   const response = await axios.get<WebhookListType>(
-    "https://treasury-management-backend.calpa.workers.dev/webhook/webhooks"
+    `https://treasury-management-backend.calpa.workers.dev/webhook/webhooks?address=${address}`
   );
   return response.data;
 }
-
-const ActionsCellRenderer = (props: any) => {
-  return (
-    <div className="flex items-center gap-2">
-      <button
-        className="p-2 text-gray-400 hover:text-gray-500 rounded-lg hover:bg-gray-50"
-        title="Edit webhook"
-        onClick={() => props.onEdit(props.data)}
-      >
-        <Icon icon="heroicons:pencil-square" className="h-5 w-5" />
-      </button>
-      <button
-        className="p-2 text-gray-400 hover:text-red-500 rounded-lg hover:bg-gray-50"
-        title="Delete webhook"
-        onClick={() => props.onDelete(props.data)}
-      >
-        <Icon icon="heroicons:trash" className="h-5 w-5" />
-      </button>
-    </div>
-  );
-};
 
 const StatusCellRenderer = (props: any) => {
   return (
@@ -55,10 +35,15 @@ const StatusCellRenderer = (props: any) => {
 export function WebhookList() {
   const { address } = useAccount();
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["webhooks", address],
-    queryFn: fetchWebhooks,
+    queryFn: () => fetchWebhooks(address!),
   });
+
+  useEffect(() => {
+    if (!address) return;
+    refetch();
+  }, [address, refetch]);
 
   const columnDefs: ColDef[] = [
     {
@@ -157,7 +142,7 @@ export function WebhookList() {
     );
   }
 
-  if (!data?.webhooks?.length) {
+  if (!data?.length) {
     return (
       <div className="flex flex-col items-center justify-center h-64 text-center">
         <Icon
@@ -195,7 +180,7 @@ export function WebhookList() {
       }
     >
       <AgGridReact
-        rowData={data.webhooks}
+        rowData={data}
         columnDefs={columnDefs}
         defaultColDef={{
           sortable: true,
