@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
   createColumnHelper,
-  flexRender,
   getCoreRowModel,
   useReactTable,
   getSortedRowModel,
@@ -11,7 +10,6 @@ import { Icon } from "@iconify/react";
 import { useEffect, useState, useMemo } from "react";
 import { fetchTransactions } from "../../services/transactions";
 import { Transaction } from "../../types";
-import { Spinner } from "../../components";
 import { useAccount } from "wagmi";
 import { getChainName, getChainIcon, getExplorerUrl } from "../../utils/chains";
 import transactionTypes from "../../constants/transactionTypes.json";
@@ -339,6 +337,7 @@ function RouteComponent() {
     columns,
     state: {
       sorting,
+      columnFilters: [{ id: "details.chainName", value: "" }],
     },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
@@ -374,41 +373,23 @@ function RouteComponent() {
 
   return (
     <div className="p-4">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Transactions</h1>
-        <p className="text-gray-600">View all transactions for your wallet</p>
-      </div>
-
-      {/* Control Panel */}
-      <div className="flex flex-col md:flex-row justify-between items-center mb-4 space-y-4 md:space-y-0">
-        <div className="flex items-center space-x-10">
-          <select
-            value={pageSize}
-            onChange={(e) => {
-              setPageSize(Number(e.target.value) as typeof pageSize);
-              setPageIndex(0);
-            }}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-          >
-            {PAGE_SIZE_OPTIONS.map((size) => (
-              <option key={size} value={size}>
-                Show {size}
-              </option>
-            ))}
-          </select>
-          <span className="text-sm text-gray-500">
-            Page {pageIndex + 1} of {pageCount}
-          </span>
+      <div className="flex flex-row justify-between items-center">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">Transactions</h1>
+          <p className="text-gray-600">View all transactions for your wallet</p>
         </div>
 
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={handleExportCSV}
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center"
-          >
-            <Icon icon="mdi:file-export" className="w-4 h-4 mr-2" />
-            Export CSV
-          </button>
+        {/* Control Panel */}
+        <div className="flex flex-col md:flex-row justify-between items-center mb-4 space-y-4 md:space-y-0">
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={handleExportCSV}
+              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center"
+            >
+              <Icon icon="mdi:file-export" className="w-4 h-4 mr-2" />
+              Export CSV
+            </button>
+          </div>
         </div>
       </div>
 
@@ -416,9 +397,6 @@ function RouteComponent() {
         loading={loading}
         error={error}
         transactions={transactions}
-        table={table}
-        pageSize={pageSize}
-        setPageSize={setPageSize}
       />
     </div>
   );
