@@ -87,25 +87,33 @@ src/
 │   └── export.ts       # Export formatting
 ├── constants/          # Configuration constants
 │   └── chains.ts       # Chain definitions
+│   └── api.ts          # API configuration
 └── types.ts           # TypeScript type definitions
 ```
 
-## 🔌 Backend Integration
+## 💾 Backend Integration
 
-OrbitGO uses Cloudflare Workers as the API backend:
+OrbitGO uses Cloudflare Workers as a secure proxy to the 1inch Portfolio API:
 
 ```typescript
 // Base URL
 const BASE_URL = 'https://treasury-management-backend.calpa.workers.dev'
 
 // Key Endpoints
-GET /portfolio/:address         // Portfolio overview
+GET /portfolio/:address         // Portfolio overview via 1inch
 GET /portfolio/:address/value-chart  // Historical value data
 
-// Features
+// 1inch Portfolio API Features
+- Real-time portfolio tracking
+- Multi-chain protocol positions
+- Historical performance data
+- Token prices and valuations
+
+// Cloudflare Workers Features
+- API key protection
 - Rate limiting
 - Response caching
-- Cross-chain data aggregation
+- CORS handling
 ```
 
 ## 🛠️ Tech Stack
@@ -171,7 +179,10 @@ GET /portfolio/:address/value-chart  // Historical value data
 
 ## 🔐 Security
 
-- API keys are stored in environment variables
+- 1inch API keys are securely stored in Cloudflare Workers
+- Environment variables for local development
+- Rate limiting protection via Cloudflare Workers
+- No sensitive data stored in frontend
 - All data processing happens client-side
 - Secure wallet connections via RainbowKit
 
@@ -197,7 +208,13 @@ flowchart TB
     subgraph Backend["☁️ Cloudflare Workers"]
         Cache["💾 Cache Layer"]
         RateLimit["🚦 Rate Limiter"]
-        Aggregator["🔄 Data Aggregator"]
+        Proxy["🔗 API Proxy"]
+    end
+
+    subgraph OneInch["🔥 1inch API"]
+        Portfolio["Portfolio API"]
+        Prices["Token Prices"]
+        Protocols["Protocol Data"]
     end
 
     subgraph Blockchain["⛓️ Blockchain Networks"]
@@ -210,8 +227,9 @@ flowchart TB
 
     User["👤 User"] --> Frontend
     Frontend --> Backend
-    Backend --> Blockchain
-    Blockchain --> Backend
+    Backend --> OneInch
+    OneInch --> Blockchain
+    OneInch --> Backend
     Backend --> Frontend
 ```
 
