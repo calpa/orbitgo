@@ -20,7 +20,7 @@ function WelcomeCard(props: WelcomeCardProps) {
         <div>
           <h2 className="text-2xl font-bold text-gray-800 mb-2">OrbitGo</h2>
           <p className="text-gray-600">
-            Connected with address:{" "}
+            Welcome{" "}
             <span className="font-mono text-sm bg-blue-50 p-1.5 rounded border border-blue-100">
               {displayName}
             </span>

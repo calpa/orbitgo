@@ -2,39 +2,36 @@ import { useQuery } from "@tanstack/react-query";
 import moment from "moment";
 import { exportToCSV } from "../utils/csv";
 import { useAccount } from "wagmi";
-import axios from "axios";
+import axios from "../axios";
 import { randomDelay } from "../utils/delay";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Legend,
 } from "recharts";
+import { getChainName } from "../utils/chains";
 
-// Using Cloudflare Workers backend
-
-interface ChartDataItem {
+export interface Result {
   timestamp: number;
   value_usd: number;
 }
 
-interface ValueChartResponse {
-  result: ChartDataItem[];
+export interface BalanceHistoryAPIResponse {
+  message: string;
+  address: string;
+  timerange: string;
+  useCache: boolean;
+  result: { [key: string]: Result[] };
 }
 
 function formatDate(timestamp: number) {
-  return new Date(timestamp * 1000).toLocaleDateString();
-}
-
-function formatValue(value: number) {
-  return `$${value.toLocaleString("en-US", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}`;
+  return moment(timestamp * 1000).format("MMM D, YYYY");
 }
 
 export function ValueChart() {
@@ -55,12 +52,12 @@ export function ValueChart() {
 
       await randomDelay(1, 5); // Random delay between 1-5 seconds
 
-      const response = await axios.get<ValueChartResponse>(
+      const response = await axios.get<BalanceHistoryAPIResponse>(
         `/portfolio/${address}/value-chart`,
         {
           params: {
-            timerange: timerange
-          }
+            timerange: timerange,
+          },
         }
       );
 
@@ -81,16 +78,40 @@ export function ValueChart() {
 
     exportToCSV({
       headers: ["Date", "Value (USD)"],
-      rowTransformer: (item) => [
-        new Date(item.timestamp * 1000).toISOString(),
-        item.value_usd.toString(),
+      rowTransformer: (item: [string, Result[]]) => [
+        new Date(parseInt(item[0]) * 1000).toISOString(),
+        ...item[1].map((result) => result.value_usd.toString()),
       ],
-      data: chartData.result,
+      data: Object.entries(chartData.result),
       filename: `${address}_from_${from}_to_${to}_value`,
     });
   }
 
   const gettingData = isLoading || isRefetching;
+
+  const formattedData = useMemo(() => {
+    if (!chartData) return [];
+
+    // First, collect all unique timestamps
+    const timestamps = new Set<number>();
+    Object.values(chartData.result).forEach((values) => {
+      values.forEach(({ timestamp }) => timestamps.add(timestamp));
+    });
+
+    // Create data points for each timestamp
+    return Array.from(timestamps)
+      .sort((a, b) => a - b)
+      .map((timestamp) => {
+        const dataPoint: any = { timestamp };
+        Object.entries(chartData.result).forEach(([chainId, values]) => {
+          const value = values.find((v) => v.timestamp === timestamp);
+          if (value) {
+            dataPoint[`chain_${chainId}`] = value.value_usd;
+          }
+        });
+        return dataPoint;
+      });
+  }, [chartData]);
 
   return (
     <div className="bg-white p-4 rounded-lg shadow">
@@ -145,12 +166,12 @@ export function ValueChart() {
         </div>
       )}
 
-      {!gettingData && (
+      {!gettingData && chartData && (
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-              data={chartData?.result || []}
-              margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
+            <AreaChart
+              data={formattedData}
+              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
@@ -159,22 +180,44 @@ export function ValueChart() {
                 tick={{ fontSize: 12 }}
               />
               <YAxis
-                tickFormatter={formatValue}
-                width={80}
+                tickFormatter={(value) => `$${value.toLocaleString()}`}
                 tick={{ fontSize: 12 }}
+                width={80}
               />
               <Tooltip
-                formatter={(value: number) => formatValue(value)}
+                formatter={(value: number, name: string) => [
+                  `$${value.toLocaleString()}`,
+                  `Chain ${getChainName(parseInt(name))}`,
+                ]}
+                contentStyle={{
+                  backgroundColor: "#fff",
+                  border: "1px solid #ccc",
+                  borderRadius: "4px",
+                  padding: "8px",
+                }}
+                itemStyle={{
+                  color: "#666",
+                }}
                 labelFormatter={(label: number) => formatDate(label)}
               />
-              <Line
-                type="monotone"
-                dataKey="value_usd"
-                stroke="#2563eb"
-                strokeWidth={2}
-                dot={false}
+              <Legend
+                formatter={(value: string) => getChainName(parseInt(value))}
+                iconType="circle"
+                iconSize={12}
               />
-            </LineChart>
+              {Object.keys(chartData.result).map((chainId) => (
+                <Area
+                  key={chainId}
+                  type="monotone"
+                  dataKey={`chain_${chainId}`}
+                  name={chainId}
+                  stackId="1"
+                  stroke={`hsl(${parseInt(chainId) * 137.5}, 70%, 50%)`}
+                  fill={`hsl(${parseInt(chainId) * 137.5}, 70%, 50%)`}
+                  fillOpacity={0.6}
+                />
+              ))}
+            </AreaChart>
           </ResponsiveContainer>
         </div>
       )}
