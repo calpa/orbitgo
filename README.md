@@ -19,9 +19,9 @@
 
 ### 🔄 Real-time Portfolio Tracking
 
-- **Cross-chain Monitoring**: Track assets across Ethereum, Arbitrum, Optimism, Base, BSC, Polygon, and more
-- **Protocol-level Analytics**: View positions in DeFi protocols with real-time USD valuations
-- **Historical Performance**: Track portfolio value changes over customizable time periods
+- **Multi-Chain Support**: Track tokens across Ethereum, Arbitrum, Base, Kaia, Optimism, and Polygon
+- **Token Terminal**: Comprehensive token viewing interface with smart filtering and beautiful UI
+- **Webhook Management**: Create and manage webhooks for token tracking with real-time status monitoring
 
 ### 📊 Advanced Analytics
 
@@ -35,17 +35,19 @@
 - **Data Export**: Export transaction history and portfolio data to CSV
 - **Real-time Updates**: Automatic data refresh with manual refresh option
 
-### Data Visualization
+### 🎨 User Interface
 
-- **Protocol Allocation Chart**: Interactive pie chart showing asset distribution across protocols
-- **Total Value Overview**: Real-time summary of total portfolio value and protocol count
-- **Chain Distribution**: Detailed breakdown of assets by blockchain
-- **Custom Filtering**: Filter protocols by chain, value, and other parameters
+- **Token Details**: View token balances, symbols, and contract addresses
+- **Smart Filtering**: Automatically filter out suspicious or spam tokens
+- **Chain Icons**: Beautiful chain and token icons with fallback displays
+- **Responsive Design**: Optimized for both desktop and mobile viewing
 
-### Data Export
+### 🔗 Webhook Features
 
-- **CSV Export**: Export protocol data with customizable fields
-- **Formatted Data**: Well-structured exports including Protocol, Chain, Value (USD), ROI, and APR
+- **Multi-Address Support**: Add multiple addresses to a single webhook
+- **Network Selection**: Choose from multiple supported networks
+- **Status Monitoring**: Track webhook status and activity
+- **Easy Management**: Create, view, and manage webhooks through a simple interface
 
 ## 🚀 Getting Started
 
@@ -53,20 +55,20 @@
 
 - Node.js 18+
 - npm or yarn
-- Ethereum wallet (MetaMask, Rainbow, etc.)
+- Web3 wallet (MetaMask, Rainbow, etc.)
+- Environment variables (see below)
 
 ### Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/treasury-management-frontend.git
+git clone https://github.com/calpa/treasury-management-frontend.git
 
 # Install dependencies
 npm install
 
 # Set up environment variables
-cp .env.example .env
-# Edit .env with your API key
+echo 'VITE_API_URL=https://treasury-management-backend.calpa.workers.dev' > .env
 
 # Start development server
 npm run dev
@@ -77,43 +79,47 @@ npm run dev
 ```
 src/
 ├── components/          # Reusable UI components
-│   ├── YieldCard/       # Protocol yield display
-│   └── ProtocolAllocationChart/  # Portfolio visualization
+│   ├── BalanceCard/     # Chain balance display
+│   └── webhooks/        # Webhook management components
 ├── routes/              # Application routes
 │   └── dashboard/       # Main dashboard views
+│       ├── chains/      # Token terminal views
+│       └── notifications/ # Webhook management views
 ├── utils/              # Utility functions
-│   ├── csv.ts          # CSV export utilities
-│   ├── protocol.ts     # Protocol data processing
-│   └── export.ts       # Export formatting
+│   ├── chains.ts       # Chain utilities
+│   └── format.ts       # Formatting utilities
 ├── constants/          # Configuration constants
-│   └── chains.ts       # Chain definitions
-│   └── api.ts          # API configuration
-└── types.ts           # TypeScript type definitions
+│   ├── chains.json     # Chain definitions
+│   └── networks.ts     # Network configurations
+└── types/             # TypeScript type definitions
+    ├── chain_details.ts # Chain and token types
+    └── webhooks.ts     # Webhook types
 ```
 
 ## 💾 Backend Integration
 
-OrbitGO uses Cloudflare Workers as a secure proxy to the 1inch Portfolio API:
+The application uses Cloudflare Workers as the backend API:
 
 ```typescript
 // Base URL
 const BASE_URL = 'https://treasury-management-backend.calpa.workers.dev'
 
 // Key Endpoints
-GET /portfolio/:address         // Portfolio overview via 1inch
-GET /portfolio/:address/value-chart  // Historical value data
+POST /token/:protocol/:network/tokens/owned  // Get owned tokens for a protocol
+GET  /webhook/webhooks                       // List all webhooks
+POST /webhook                                // Create a new webhook
 
-// 1inch Portfolio API Features
-- Real-time portfolio tracking
-- Multi-chain protocol positions
-- Historical performance data
-- Token prices and valuations
+// API Features
+- Token balance tracking
+- Multi-chain support
+- Webhook management
+- Smart token filtering
 
 // Cloudflare Workers Features
-- API key protection
 - Rate limiting
 - Response caching
 - CORS handling
+- Error handling
 ```
 
 ## 🛠️ Tech Stack
@@ -198,38 +204,40 @@ GET /portfolio/:address/value-chart  // Historical value data
 
 ```mermaid
 flowchart TB
-    subgraph Frontend["🖥️ Frontend - React 19"]
+    subgraph Frontend["💻 Frontend - React + TypeScript"]
         UI["🎨 UI Components"]
         Router["🛣️ TanStack Router"]
-        State["📦 State Management"]
-        Web3["🔌 Web3 Integration"]
+        Query["📊 TanStack Query"]
+        Web3["🔌 wagmi v2"]
     end
 
     subgraph Backend["☁️ Cloudflare Workers"]
         Cache["💾 Cache Layer"]
         RateLimit["🚦 Rate Limiter"]
-        Proxy["🔗 API Proxy"]
+        TokenAPI["🔗 Token API"]
+        WebhookAPI["💬 Webhook API"]
     end
 
-    subgraph OneInch["🔥 1inch API"]
-        Portfolio["Portfolio API"]
-        Prices["Token Prices"]
-        Protocols["Protocol Data"]
+    subgraph Features["✨ Features"]
+        Tokens["Token Terminal"]
+        Webhooks["Webhook Management"]
+        Filtering["Smart Filtering"]
     end
 
-    subgraph Blockchain["⛓️ Blockchain Networks"]
+    subgraph Networks["⛓️ Supported Networks"]
         ETH["Ethereum"]
         ARB["Arbitrum"]
-        OP["Optimism"]
-        BSC["BSC"]
         BASE["Base"]
+        KAIA["Kaia"]
+        OP["Optimism"]
+        POLY["Polygon"]
     end
 
     User["👤 User"] --> Frontend
     Frontend --> Backend
-    Backend --> OneInch
-    OneInch --> Blockchain
-    OneInch --> Backend
+    Backend --> Features
+    Features --> Networks
+    Networks --> Backend
     Backend --> Frontend
 ```
 
@@ -237,26 +245,27 @@ flowchart TB
 
 ### Core Features
 
-- [x] Cross-chain portfolio tracking
-- [x] Protocol-level analytics
-- [x] Historical value charts
-- [ ] Token-level breakdown
-- [ ] Portfolio alerts
+- [x] Multi-chain token tracking
+- [x] Smart token filtering
+- [x] Webhook management
+- [ ] Token price tracking
+- [ ] Token transfer history
 
-### Analytics & Reporting
+### Token Terminal
 
-- [x] Chain distribution view
-- [x] Protocol allocation charts
-- [x] CSV data export
-- [ ] Custom date range analytics
-- [ ] Performance benchmarking
+- [x] Token balance display
+- [x] Chain selection interface
+- [x] Spam token filtering
+- [ ] Token search functionality
+- [ ] Token sorting options
 
-### User Experience
+### Webhook System
 
-- [ ] Portfolio alerts and notifications
-- [ ] Custom portfolio comparison tools
-- [ ] Enhanced analytics dashboard
-- [ ] Mobile-responsive design improvements
+- [x] Multi-address support
+- [x] Network selection
+- [x] Status monitoring
+- [ ] Webhook event history
+- [ ] Custom notification options
 
 ## 💡 Development Tips
 

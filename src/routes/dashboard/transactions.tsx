@@ -90,7 +90,7 @@ function RouteComponent() {
         </button>
       </div>
 
-      <TransactionChart transactions={transactions} />
+      {!loading && <TransactionChart transactions={transactions} />}
 
       <TransactionTable
         loading={loading}
