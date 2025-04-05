@@ -6,13 +6,18 @@ import {
   useReactTable,
   getSortedRowModel,
   SortingState,
-  ColumnDef,
 } from "@tanstack/react-table";
-import { useEffect, useState } from "react";
+import { Icon } from "@iconify/react";
+import { useEffect, useState, useMemo } from "react";
 import { fetchTransactions } from "../../services/transactions";
 import { Transaction } from "../../types";
 import { Spinner } from "../../components";
 import { useAccount } from "wagmi";
+import { getChainName, getChainIcon, getExplorerUrl } from "../../utils/chains";
+import transactionTypes from "../../constants/transactionTypes.json";
+import { exportToCSV } from "../../utils/csv";
+
+const PAGE_SIZE_OPTIONS = [10, 50, 100] as const;
 
 // Using Transaction type from types.ts
 
@@ -20,8 +25,106 @@ const columnHelper = createColumnHelper<Transaction>();
 
 const columns = [
   columnHelper.accessor("details.type", {
-    header: () => <span className="cursor-pointer">Type</span>,
-    cell: (info) => <span className="font-medium">{info.getValue()}</span>,
+    header: () => (
+      <div className="flex items-center space-x-1 cursor-pointer">
+        <svg
+          className="w-4 h-4 text-gray-500"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M3 6h18" />
+          <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+          <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+        </svg>
+        <span>Type</span>
+      </div>
+    ),
+    cell: (info) => {
+      const type = info.getValue();
+      const typeInfo = transactionTypes.find(
+        (t) => t.type.toLowerCase() === type.toLowerCase()
+      );
+      return (
+        <div className="flex items-center space-x-2">
+          {typeInfo && (
+            <Icon icon={typeInfo.icon} className="w-4 h-4 text-gray-600" />
+          )}
+          <span className="font-medium">{type}</span>
+        </div>
+      );
+    },
+    enableSorting: true,
+  }),
+  columnHelper.accessor("details.fromAddress", {
+    header: () => (
+      <div className="flex items-center space-x-1 cursor-pointer">
+        <svg
+          className="w-4 h-4 text-gray-500"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+        </svg>
+        <span>From</span>
+      </div>
+    ),
+    cell: (info) => {
+      const address = info.getValue();
+      return (
+        <a
+          href={`${getExplorerUrl(info.row.original.details.chainId)}/address/${address}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-500 hover:text-blue-700"
+        >
+          {address.substring(0, 6)}...{address.substring(address.length - 4)}
+        </a>
+      );
+    },
+    enableSorting: true,
+  }),
+  columnHelper.accessor("details.toAddress", {
+    header: () => (
+      <div className="flex items-center space-x-1 cursor-pointer">
+        <svg
+          className="w-4 h-4 text-gray-500"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+        <span>To</span>
+      </div>
+    ),
+    cell: (info) => {
+      const address = info.getValue();
+      return (
+        <a
+          href={`${getExplorerUrl(info.row.original.details.chainId)}/address/${address}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-500 hover:text-blue-700"
+        >
+          {address.substring(0, 6)}...{address.substring(address.length - 4)}
+        </a>
+      );
+    },
     enableSorting: true,
   }),
   columnHelper.accessor("details.status", {
@@ -38,24 +141,41 @@ const columns = [
                 : "bg-red-100 text-red-800"
           }`}
         >
-          {status}
+          {status[0].toUpperCase() + status.slice(1)}
         </span>
       );
     },
     enableSorting: true,
   }),
   columnHelper.accessor("details.chainId", {
-    header: () => <span className="cursor-pointer">Chain</span>,
+    header: () => (
+      <div className="flex items-center space-x-1 cursor-pointer">
+        <svg
+          className="w-4 h-4 text-gray-500"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M21 12a9 9 0 0 0-9-9 9 9 0 0 0-9 9c0 3.4 2.7 6.2 6 7.3V21l3-3 3 3v-1.7c3.3-1.1 6-3.9 6-7.3Z" />
+        </svg>
+        <span>Chain</span>
+      </div>
+    ),
     cell: (info) => {
       const chainId = info.getValue();
-      const chainName =
-        {
-          1: "Ethereum",
-          56: "BSC",
-          100: "Gnosis",
-          137: "Polygon",
-        }[chainId] || `Chain ${chainId}`;
-      return <span>{chainName}</span>;
+      const chainName = getChainName(chainId);
+      const chainIcon = getChainIcon(chainId);
+      return (
+        <div className="flex items-center space-x-2">
+          {chainIcon && (
+            <img src={chainIcon} alt={chainName} className="w-4 h-4" />
+          )}
+          <span>{chainName}</span>
+        </div>
+      );
     },
     enableSorting: true,
   }),
@@ -71,7 +191,7 @@ const columns = [
               : "bg-red-100 text-red-800"
           }`}
         >
-          {direction.toUpperCase()}
+          {direction[0].toUpperCase() + direction.slice(1)}
         </span>
       );
     },
@@ -84,7 +204,10 @@ const columns = [
       return (
         <div className="space-y-1 max-w-[300px]">
           {actions.map((action, index) => (
-            <div key={index} className="flex items-center space-x-1 overflow-hidden">
+            <div
+              key={index}
+              className="flex items-center space-x-1 overflow-hidden"
+            >
               <span className="font-medium truncate">{action.amount}</span>
               <span className="text-gray-500 shrink-0">{action.standard}</span>
               {action.priceToUsd && (
@@ -99,17 +222,28 @@ const columns = [
     },
   }),
   columnHelper.accessor("details.txHash", {
-    header: () => <span>Transaction Hash</span>,
+    header: () => (
+      <div className="flex items-center space-x-1">
+        <svg
+          className="w-4 h-4 text-gray-500"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M4 11v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+          <path d="m8 5 4-4 4 4" />
+          <path d="M12 1v12" />
+        </svg>
+        <span>Transaction Hash</span>
+      </div>
+    ),
     cell: (info) => {
       const hash = info.getValue();
       const chainId = info.row.original.details.chainId;
-      const explorerUrl =
-        {
-          100: "https://gnosisscan.io",
-          1: "https://etherscan.io",
-          56: "https://bscscan.com",
-          137: "https://polygonscan.com",
-        }[chainId] || "https://bscscan.com";
+      const explorerUrl = getExplorerUrl(chainId);
 
       return (
         <a
@@ -142,14 +276,57 @@ export const Route = createFileRoute("/dashboard/transactions")({
 });
 
 function RouteComponent() {
-  const [data, setData] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize, setPageSize] =
+    useState<(typeof PAGE_SIZE_OPTIONS)[number]>(10);
   const { address } = useAccount();
   const [sorting, setSorting] = useState<SortingState>([]);
 
+  const handleExportCSV = () => {
+    exportToCSV({
+      headers: [
+        "Type",
+        "From",
+        "To",
+        "Status",
+        "Chain",
+        "Direction",
+        "Amount",
+        "Hash",
+        "Time",
+      ],
+      rowTransformer: (tx: Transaction) => [
+        tx.details.type,
+        tx.details.fromAddress,
+        tx.details.toAddress,
+        tx.details.status,
+        getChainName(tx.details.chainId),
+        tx.direction,
+        tx.details.tokenActions
+          .map(
+            (action) =>
+              `${action.amount} ${action.standard}${action.priceToUsd ? ` ($${action.priceToUsd.toFixed(2)})` : ""}`
+          )
+          .join(", "),
+        tx.details.txHash,
+        new Date(tx.timeMs).toLocaleString(),
+      ],
+      data: transactions,
+      filename: `transactions_${address}_${new Date().toISOString()}`,
+    });
+  };
+
+  const pageCount = Math.ceil(transactions.length / pageSize);
+  const paginatedData = useMemo(
+    () => transactions.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize),
+    [transactions, pageIndex, pageSize]
+  );
+
   const table = useReactTable({
-    data,
+    data: paginatedData,
     columns,
     state: {
       sorting,
@@ -166,7 +343,7 @@ function RouteComponent() {
         setLoading(true);
         setError(null);
         const transactions = await fetchTransactions(address);
-        setData(transactions);
+        setTransactions(transactions);
       } catch (err) {
         console.error("Failed to fetch transactions:", err);
         setError("Failed to load transactions. Please try again later.");
@@ -193,13 +370,46 @@ function RouteComponent() {
         <p className="text-gray-600">View all transactions for your wallet</p>
       </div>
 
+      {/* Control Panel */}
+      <div className="flex flex-col md:flex-row justify-between items-center mb-4 space-y-4 md:space-y-0">
+        <div className="flex items-center space-x-10">
+          <select
+            value={pageSize}
+            onChange={(e) => {
+              setPageSize(Number(e.target.value) as typeof pageSize);
+              setPageIndex(0);
+            }}
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+          >
+            {PAGE_SIZE_OPTIONS.map((size) => (
+              <option key={size} value={size}>
+                Show {size}
+              </option>
+            ))}
+          </select>
+          <span className="text-sm text-gray-500">
+            Page {pageIndex + 1} of {pageCount}
+          </span>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={handleExportCSV}
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center"
+          >
+            <Icon icon="mdi:file-export" className="w-4 h-4 mr-2" />
+            Export CSV
+          </button>
+        </div>
+      </div>
+
       {loading ? (
         <div className="flex justify-center items-center py-12">
           <Spinner />
         </div>
       ) : error ? (
         <div className="text-red-500 text-center py-8">{error}</div>
-      ) : data.length === 0 ? (
+      ) : transactions.length === 0 ? (
         <div className="text-gray-500 text-center py-8">
           No transactions found
         </div>
@@ -243,6 +453,64 @@ function RouteComponent() {
               ))}
             </tbody>
           </table>
+
+          <div className="flex flex-col items-center justify-between p-4 space-y-3 md:flex-row md:space-y-0 md:space-x-4">
+            <div className="flex mt-2 space-x-2">
+              <button
+                onClick={() => setPageIndex(0)}
+                disabled={pageIndex === 0}
+                className="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Icon
+                  icon="mdi:chevron-double-left"
+                  className="w-3.5 h-3.5 mr-2"
+                />
+                First
+              </button>
+              <button
+                onClick={() => setPageIndex((old) => Math.max(0, old - 1))}
+                disabled={pageIndex === 0}
+                className="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Icon icon="mdi:chevron-left" className="w-3.5 h-3.5 mr-2" />
+                Prev
+              </button>
+            </div>
+            <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
+              Showing{" "}
+              <span className="font-semibold text-gray-900 dark:text-white">
+                {pageIndex * pageSize + 1}-
+                {Math.min((pageIndex + 1) * pageSize, transactions.length)}
+              </span>{" "}
+              of{" "}
+              <span className="font-semibold text-gray-900 dark:text-white">
+                {transactions.length}
+              </span>
+            </span>
+            <div className="flex mt-2 space-x-2">
+              <button
+                onClick={() =>
+                  setPageIndex((old) => Math.min(pageCount - 1, old + 1))
+                }
+                disabled={pageIndex === pageCount - 1}
+                className="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+                <Icon icon="mdi:chevron-right" className="w-3.5 h-3.5 ml-2" />
+              </button>
+              <button
+                onClick={() => setPageIndex(pageCount - 1)}
+                disabled={pageIndex === pageCount - 1}
+                className="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Last
+                <Icon
+                  icon="mdi:chevron-double-right"
+                  className="w-3.5 h-3.5 ml-2"
+                />
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

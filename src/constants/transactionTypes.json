@@ -1,0 +1,172 @@
+[
+  {
+    "type": "Unknown",
+    "description": "A transaction type that hasn't been identified or categorized.",
+    "icon": "mdi:help-circle-outline"
+  },
+  {
+    "type": "Approve",
+    "description": "Granting permission for a smart contract to spend your tokens.",
+    "icon": "mdi:check-decagram"
+  },
+  {
+    "type": "Send",
+    "description": "Sending tokens to another address.",
+    "icon": "mdi:arrow-top-right"
+  },
+  {
+    "type": "Receive",
+    "description": "Receiving tokens from another address.",
+    "icon": "mdi:arrow-bottom-left"
+  },
+  {
+    "type": "Wrap",
+    "description": "Converting a cryptocurrency into its wrapped version.",
+    "icon": "mdi:package-variant"
+  },
+  {
+    "type": "Unwrap",
+    "description": "Converting a wrapped token back to its original cryptocurrency.",
+    "icon": "mdi:package-variant-remove"
+  },
+  {
+    "type": "Swap",
+    "description": "Exchanging one type of token for another.",
+    "icon": "mdi:swap-horizontal"
+  },
+  {
+    "type": "Transfer",
+    "description": "Sending tokens from one address to another.",
+    "icon": "mdi:arrow-top-right"
+  },
+  {
+    "type": "LimitOrderFill",
+    "description": "Executing a limit order by buying or selling tokens at the specified price or better.",
+    "icon": "mdi:chart-line"
+  },
+  {
+    "type": "LimitOrderCancel",
+    "description": "Canceling an existing limit order that is expired or hasn't been filled fully.",
+    "icon": "mdi:close-circle-outline"
+  },
+  {
+    "type": "LimitOrderCancelAll",
+    "description": "Canceling an active limit order.",
+    "icon": "mdi:cancel"
+  },
+  {
+    "type": "AddLiquidity",
+    "description": "Providing tokens to a liquidity pool to facilitate trading and earn rewards.",
+    "icon": "mdi:plus-box-multiple"
+  },
+  {
+    "type": "RemoveLiquidity",
+    "description": "Withdrawing tokens from a liquidity pool.",
+    "icon": "mdi:minus-box-multiple"
+  },
+  {
+    "type": "Borrow",
+    "description": "Taking out a loan in the form of tokens from a lending protocol.",
+    "icon": "mdi:bank-outline"
+  },
+  {
+    "type": "Repay",
+    "description": "Returning borrowed tokens to a lending protocol.",
+    "icon": "mdi:cash-refund"
+  },
+  {
+    "type": "Stake",
+    "description": "Locking tokens in a protocol to earn rewards or participate in governance.",
+    "icon": "mdi:lock"
+  },
+  {
+    "type": "Unstake",
+    "description": "Withdrawing staked tokens from a protocol.",
+    "icon": "mdi:lock-open"
+  },
+  {
+    "type": "Vote",
+    "description": "Casting a vote on a proposal in a decentralized governance system.",
+    "icon": "mdi:vote-outline"
+  },
+  {
+    "type": "DelegateVotePower",
+    "description": "Assigning your voting power to another address to vote on your behalf.",
+    "icon": "mdi:account-arrow-right"
+  },
+  {
+    "type": "UnDelegateVotePower",
+    "description": "Revoking the assignment of your voting power from a delegate.",
+    "icon": "mdi:account-arrow-left"
+  },
+  {
+    "type": "DiscardVote",
+    "description": "Invalidating or withdrawing a previously cast vote.",
+    "icon": "mdi:vote-remove"
+  },
+  {
+    "type": "Claim",
+    "description": "Retrieving rewards or tokens that are due to you.",
+    "icon": "mdi:gift-outline"
+  },
+  {
+    "type": "Action",
+    "description": "Performing a specific function or task within a smart contract.",
+    "icon": "mdi:play-circle-outline"
+  },
+  {
+    "type": "Bridge",
+    "description": "Transferring tokens across different blockchains.",
+    "icon": "mdi:bridge"
+  },
+  {
+    "type": "BuyNft",
+    "description": "Purchasing an NFT from the marketplace.",
+    "icon": "mdi:cart-outline"
+  },
+  {
+    "type": "BidNft",
+    "description": "Placing a bid on an NFT in an auction.",
+    "icon": "mdi:gavel"
+  },
+  {
+    "type": "OfferSellNft",
+    "description": "Making an offer to sell an NFT you own.",
+    "icon": "mdi:tag-outline"
+  },
+  {
+    "type": "Burn",
+    "description": "Permanently removing tokens from circulation.",
+    "icon": "mdi:fire"
+  },
+  {
+    "type": "WrappedTx",
+    "description": "A Gnosis Safe transaction which can include one or more multisigned transactions.",
+    "icon": "mdi:layers-outline"
+  },
+  {
+    "type": "RegisterENSDomain",
+    "description": "Registering a human-readable name on the Ethereum Name Service (ENS) to associate with your address.",
+    "icon": "mdi:domain"
+  },
+  {
+    "type": "Revoke",
+    "description": "Withdrawing previously granted permissions or approvals.",
+    "icon": "mdi:undo"
+  },
+  {
+    "type": "CreateSafe",
+    "description": "Creating a multisig Gnosis Safe Wallet.",
+    "icon": "mdi:shield-lock"
+  },
+  {
+    "type": "AddOwner",
+    "description": "Adding a new owner to a multisig Gnosis Safe Wallet.",
+    "icon": "mdi:account-plus-outline"
+  },
+  {
+    "type": "MultiStage",
+    "description": "A transaction that involves multiple steps or stages, often used in complex operations.",
+    "icon": "mdi:progress-clock"
+  }
+]

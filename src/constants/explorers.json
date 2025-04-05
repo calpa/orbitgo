@@ -1,0 +1,44 @@
+{
+  "result": [
+    {
+      "chainId": 1,
+      "url": "https://etherscan.io"
+    },
+    {
+      "chainId": 10,
+      "url": "https://optimistic.etherscan.io"
+    },
+    {
+      "chainId": 56,
+      "url": "https://bscscan.com"
+    },
+    {
+      "chainId": 100,
+      "url": "https://gnosisscan.io"
+    },
+    {
+      "chainId": 137,
+      "url": "https://polygonscan.com"
+    },
+    {
+      "chainId": 324,
+      "url": "https://explorer.zksync.io"
+    },
+    {
+      "chainId": 8453,
+      "url": "https://basescan.org"
+    },
+    {
+      "chainId": 42161,
+      "url": "https://arbiscan.io"
+    },
+    {
+      "chainId": 43114,
+      "url": "https://snowtrace.io"
+    },
+    {
+      "chainId": 59144,
+      "url": "https://lineascan.build"
+    }
+  ]
+}
