@@ -14,6 +14,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as DashboardImport } from './routes/dashboard'
 import { Route as AboutImport } from './routes/about'
 import { Route as IndexImport } from './routes/index'
+import { Route as DashboardIndexImport } from './routes/dashboard/index'
 import { Route as DashboardYieldsImport } from './routes/dashboard/yields'
 import { Route as DashboardTransactionsImport } from './routes/dashboard/transactions'
 import { Route as DashboardSendImport } from './routes/dashboard/send'
@@ -38,6 +39,12 @@ const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const DashboardIndexRoute = DashboardIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRoute,
 } as any)
 
 const DashboardYieldsRoute = DashboardYieldsImport.update({
@@ -130,6 +137,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardYieldsImport
       parentRoute: typeof DashboardImport
     }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexImport
+      parentRoute: typeof DashboardImport
+    }
   }
 }
 
@@ -141,6 +155,7 @@ interface DashboardRouteChildren {
   DashboardSendRoute: typeof DashboardSendRoute
   DashboardTransactionsRoute: typeof DashboardTransactionsRoute
   DashboardYieldsRoute: typeof DashboardYieldsRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
@@ -149,6 +164,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardSendRoute: DashboardSendRoute,
   DashboardTransactionsRoute: DashboardTransactionsRoute,
   DashboardYieldsRoute: DashboardYieldsRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
@@ -164,17 +180,18 @@ export interface FileRoutesByFullPath {
   '/dashboard/send': typeof DashboardSendRoute
   '/dashboard/transactions': typeof DashboardTransactionsRoute
   '/dashboard/yields': typeof DashboardYieldsRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/dashboard': typeof DashboardRouteWithChildren
   '/dashboard/chains': typeof DashboardChainsRoute
   '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/send': typeof DashboardSendRoute
   '/dashboard/transactions': typeof DashboardTransactionsRoute
   '/dashboard/yields': typeof DashboardYieldsRoute
+  '/dashboard': typeof DashboardIndexRoute
 }
 
 export interface FileRoutesById {
@@ -187,6 +204,7 @@ export interface FileRoutesById {
   '/dashboard/send': typeof DashboardSendRoute
   '/dashboard/transactions': typeof DashboardTransactionsRoute
   '/dashboard/yields': typeof DashboardYieldsRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -200,16 +218,17 @@ export interface FileRouteTypes {
     | '/dashboard/send'
     | '/dashboard/transactions'
     | '/dashboard/yields'
+    | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
-    | '/dashboard'
     | '/dashboard/chains'
     | '/dashboard/notifications'
     | '/dashboard/send'
     | '/dashboard/transactions'
     | '/dashboard/yields'
+    | '/dashboard'
   id:
     | '__root__'
     | '/'
@@ -220,6 +239,7 @@ export interface FileRouteTypes {
     | '/dashboard/send'
     | '/dashboard/transactions'
     | '/dashboard/yields'
+    | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
 
@@ -263,7 +283,8 @@ export const routeTree = rootRoute
         "/dashboard/notifications",
         "/dashboard/send",
         "/dashboard/transactions",
-        "/dashboard/yields"
+        "/dashboard/yields",
+        "/dashboard/"
       ]
     },
     "/dashboard/chains": {
@@ -284,6 +305,10 @@ export const routeTree = rootRoute
     },
     "/dashboard/yields": {
       "filePath": "dashboard/yields.tsx",
+      "parent": "/dashboard"
+    },
+    "/dashboard/": {
+      "filePath": "dashboard/index.tsx",
       "parent": "/dashboard"
     }
   }
