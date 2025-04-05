@@ -17,11 +17,12 @@ import { Route as IndexImport } from './routes/index'
 import { Route as DashboardIndexImport } from './routes/dashboard/index'
 import { Route as DashboardYieldsImport } from './routes/dashboard/yields'
 import { Route as DashboardTransactionsImport } from './routes/dashboard/transactions'
+import { Route as DashboardSupportedchainsImport } from './routes/dashboard/supported_chains'
 import { Route as DashboardSendImport } from './routes/dashboard/send'
 import { Route as DashboardNotificationsImport } from './routes/dashboard/notifications'
-import { Route as DashboardChainsImport } from './routes/dashboard/chains'
 import { Route as DashboardNotificationsIndexImport } from './routes/dashboard/notifications/index'
 import { Route as DashboardNotificationsCreateImport } from './routes/dashboard/notifications/create'
+import { Route as DashboardChainsChainIdImport } from './routes/dashboard/chains/$chainId'
 
 // Create/Update Routes
 
@@ -61,6 +62,12 @@ const DashboardTransactionsRoute = DashboardTransactionsImport.update({
   getParentRoute: () => DashboardRoute,
 } as any)
 
+const DashboardSupportedchainsRoute = DashboardSupportedchainsImport.update({
+  id: '/supported_chains',
+  path: '/supported_chains',
+  getParentRoute: () => DashboardRoute,
+} as any)
+
 const DashboardSendRoute = DashboardSendImport.update({
   id: '/send',
   path: '/send',
@@ -70,12 +77,6 @@ const DashboardSendRoute = DashboardSendImport.update({
 const DashboardNotificationsRoute = DashboardNotificationsImport.update({
   id: '/notifications',
   path: '/notifications',
-  getParentRoute: () => DashboardRoute,
-} as any)
-
-const DashboardChainsRoute = DashboardChainsImport.update({
-  id: '/chains',
-  path: '/chains',
   getParentRoute: () => DashboardRoute,
 } as any)
 
@@ -92,6 +93,12 @@ const DashboardNotificationsCreateRoute =
     path: '/create',
     getParentRoute: () => DashboardNotificationsRoute,
   } as any)
+
+const DashboardChainsChainIdRoute = DashboardChainsChainIdImport.update({
+  id: '/chains/$chainId',
+  path: '/chains/$chainId',
+  getParentRoute: () => DashboardRoute,
+} as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -118,13 +125,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardImport
       parentRoute: typeof rootRoute
     }
-    '/dashboard/chains': {
-      id: '/dashboard/chains'
-      path: '/chains'
-      fullPath: '/dashboard/chains'
-      preLoaderRoute: typeof DashboardChainsImport
-      parentRoute: typeof DashboardImport
-    }
     '/dashboard/notifications': {
       id: '/dashboard/notifications'
       path: '/notifications'
@@ -137,6 +137,13 @@ declare module '@tanstack/react-router' {
       path: '/send'
       fullPath: '/dashboard/send'
       preLoaderRoute: typeof DashboardSendImport
+      parentRoute: typeof DashboardImport
+    }
+    '/dashboard/supported_chains': {
+      id: '/dashboard/supported_chains'
+      path: '/supported_chains'
+      fullPath: '/dashboard/supported_chains'
+      preLoaderRoute: typeof DashboardSupportedchainsImport
       parentRoute: typeof DashboardImport
     }
     '/dashboard/transactions': {
@@ -158,6 +165,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/dashboard/'
       preLoaderRoute: typeof DashboardIndexImport
+      parentRoute: typeof DashboardImport
+    }
+    '/dashboard/chains/$chainId': {
+      id: '/dashboard/chains/$chainId'
+      path: '/chains/$chainId'
+      fullPath: '/dashboard/chains/$chainId'
+      preLoaderRoute: typeof DashboardChainsChainIdImport
       parentRoute: typeof DashboardImport
     }
     '/dashboard/notifications/create': {
@@ -196,21 +210,23 @@ const DashboardNotificationsRouteWithChildren =
   )
 
 interface DashboardRouteChildren {
-  DashboardChainsRoute: typeof DashboardChainsRoute
   DashboardNotificationsRoute: typeof DashboardNotificationsRouteWithChildren
   DashboardSendRoute: typeof DashboardSendRoute
+  DashboardSupportedchainsRoute: typeof DashboardSupportedchainsRoute
   DashboardTransactionsRoute: typeof DashboardTransactionsRoute
   DashboardYieldsRoute: typeof DashboardYieldsRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardChainsChainIdRoute: typeof DashboardChainsChainIdRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
-  DashboardChainsRoute: DashboardChainsRoute,
   DashboardNotificationsRoute: DashboardNotificationsRouteWithChildren,
   DashboardSendRoute: DashboardSendRoute,
+  DashboardSupportedchainsRoute: DashboardSupportedchainsRoute,
   DashboardTransactionsRoute: DashboardTransactionsRoute,
   DashboardYieldsRoute: DashboardYieldsRoute,
   DashboardIndexRoute: DashboardIndexRoute,
+  DashboardChainsChainIdRoute: DashboardChainsChainIdRoute,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
@@ -221,12 +237,13 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/dashboard': typeof DashboardRouteWithChildren
-  '/dashboard/chains': typeof DashboardChainsRoute
   '/dashboard/notifications': typeof DashboardNotificationsRouteWithChildren
   '/dashboard/send': typeof DashboardSendRoute
+  '/dashboard/supported_chains': typeof DashboardSupportedchainsRoute
   '/dashboard/transactions': typeof DashboardTransactionsRoute
   '/dashboard/yields': typeof DashboardYieldsRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/chains/$chainId': typeof DashboardChainsChainIdRoute
   '/dashboard/notifications/create': typeof DashboardNotificationsCreateRoute
   '/dashboard/notifications/': typeof DashboardNotificationsIndexRoute
 }
@@ -234,11 +251,12 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/dashboard/chains': typeof DashboardChainsRoute
   '/dashboard/send': typeof DashboardSendRoute
+  '/dashboard/supported_chains': typeof DashboardSupportedchainsRoute
   '/dashboard/transactions': typeof DashboardTransactionsRoute
   '/dashboard/yields': typeof DashboardYieldsRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/dashboard/chains/$chainId': typeof DashboardChainsChainIdRoute
   '/dashboard/notifications/create': typeof DashboardNotificationsCreateRoute
   '/dashboard/notifications': typeof DashboardNotificationsIndexRoute
 }
@@ -248,12 +266,13 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/dashboard': typeof DashboardRouteWithChildren
-  '/dashboard/chains': typeof DashboardChainsRoute
   '/dashboard/notifications': typeof DashboardNotificationsRouteWithChildren
   '/dashboard/send': typeof DashboardSendRoute
+  '/dashboard/supported_chains': typeof DashboardSupportedchainsRoute
   '/dashboard/transactions': typeof DashboardTransactionsRoute
   '/dashboard/yields': typeof DashboardYieldsRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/chains/$chainId': typeof DashboardChainsChainIdRoute
   '/dashboard/notifications/create': typeof DashboardNotificationsCreateRoute
   '/dashboard/notifications/': typeof DashboardNotificationsIndexRoute
 }
@@ -264,23 +283,25 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/dashboard'
-    | '/dashboard/chains'
     | '/dashboard/notifications'
     | '/dashboard/send'
+    | '/dashboard/supported_chains'
     | '/dashboard/transactions'
     | '/dashboard/yields'
     | '/dashboard/'
+    | '/dashboard/chains/$chainId'
     | '/dashboard/notifications/create'
     | '/dashboard/notifications/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
-    | '/dashboard/chains'
     | '/dashboard/send'
+    | '/dashboard/supported_chains'
     | '/dashboard/transactions'
     | '/dashboard/yields'
     | '/dashboard'
+    | '/dashboard/chains/$chainId'
     | '/dashboard/notifications/create'
     | '/dashboard/notifications'
   id:
@@ -288,12 +309,13 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/dashboard'
-    | '/dashboard/chains'
     | '/dashboard/notifications'
     | '/dashboard/send'
+    | '/dashboard/supported_chains'
     | '/dashboard/transactions'
     | '/dashboard/yields'
     | '/dashboard/'
+    | '/dashboard/chains/$chainId'
     | '/dashboard/notifications/create'
     | '/dashboard/notifications/'
   fileRoutesById: FileRoutesById
@@ -335,17 +357,14 @@ export const routeTree = rootRoute
     "/dashboard": {
       "filePath": "dashboard.tsx",
       "children": [
-        "/dashboard/chains",
         "/dashboard/notifications",
         "/dashboard/send",
+        "/dashboard/supported_chains",
         "/dashboard/transactions",
         "/dashboard/yields",
-        "/dashboard/"
+        "/dashboard/",
+        "/dashboard/chains/$chainId"
       ]
-    },
-    "/dashboard/chains": {
-      "filePath": "dashboard/chains.tsx",
-      "parent": "/dashboard"
     },
     "/dashboard/notifications": {
       "filePath": "dashboard/notifications.tsx",
@@ -359,6 +378,10 @@ export const routeTree = rootRoute
       "filePath": "dashboard/send.tsx",
       "parent": "/dashboard"
     },
+    "/dashboard/supported_chains": {
+      "filePath": "dashboard/supported_chains.tsx",
+      "parent": "/dashboard"
+    },
     "/dashboard/transactions": {
       "filePath": "dashboard/transactions.tsx",
       "parent": "/dashboard"
@@ -369,6 +392,10 @@ export const routeTree = rootRoute
     },
     "/dashboard/": {
       "filePath": "dashboard/index.tsx",
+      "parent": "/dashboard"
+    },
+    "/dashboard/chains/$chainId": {
+      "filePath": "dashboard/chains/$chainId.tsx",
       "parent": "/dashboard"
     },
     "/dashboard/notifications/create": {
