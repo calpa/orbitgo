@@ -210,29 +210,31 @@ function RouteComponent() {
           </div>
         </div>
 
-        <motion.button
-          onClick={() => {
-            // Invalidate the portfolio query to trigger a refresh
-            queryClient.invalidateQueries({
-              queryKey: ["portfolio", address],
-            });
-          }}
-          className="px-4 py-2 bg-blue-600 text-white rounded"
-          disabled={isLoading}
-          whileHover={{ scale: 1.05, backgroundColor: "#2563eb" }}
-          whileTap={{ scale: 0.95 }}
-          animate={{
-            opacity: isLoading ? 0.7 : 1,
-          }}
-        >
-          <motion.span
+        {/* {!isLoading && (
+          <motion.button
+            onClick={() => {
+              // Invalidate the portfolio query to trigger a refresh
+              queryClient.invalidateQueries({
+                queryKey: ["portfolio", address],
+              });
+            }}
+            className="px-4 py-2 bg-blue-600 text-white rounded"
+            disabled={isLoading}
+            whileHover={{ scale: 1.05, backgroundColor: "#2563eb" }}
+            whileTap={{ scale: 0.95 }}
             animate={{
               opacity: isLoading ? 0.7 : 1,
             }}
           >
-            {isLoading ? "Loading..." : "Refresh"}
-          </motion.span>
-        </motion.button>
+            <motion.span
+              animate={{
+                opacity: isLoading ? 0.7 : 1,
+              }}
+            >
+              Refresh
+            </motion.span>
+          </motion.button>
+        )} */}
 
         <motion.button
           onClick={exportCSV}
@@ -265,46 +267,52 @@ function RouteComponent() {
         </div>
       )}
 
-      {/* Total Balances and Allocation Chart */}
-      <div className="mb-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="p-4 bg-white rounded-lg shadow">
-          <h2 className="text-xl font-semibold mb-4">Total Balances</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-gray-600">Total Value</p>
-              <p className="text-lg font-bold">
-                $
-                {protocols
-                  .reduce((sum, protocol) => sum + protocol.value_usd, 0)
-                  .toFixed(2)}
-              </p>
+      {!isLoading && protocols.length > 0 && (
+        <>
+          {/* Total Balances and Allocation Chart */}
+          <div className="mb-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="p-4 bg-white rounded-lg shadow">
+              <h2 className="text-xl font-semibold mb-4">Total Balances</h2>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-600">Total Value</p>
+                  <p className="text-lg font-bold">
+                    $
+                    {protocols
+                      .reduce((sum, protocol) => sum + protocol.value_usd, 0)
+                      .toFixed(2)}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Total Protocols</p>
+                  <p className="text-lg font-bold">{protocols.length}</p>
+                </div>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-gray-600">Total Protocols</p>
-              <p className="text-lg font-bold">{protocols.length}</p>
+
+            <div className="p-4 bg-white rounded-lg shadow">
+              <h2 className="text-xl font-semibold mb-4">
+                Protocol Allocation
+              </h2>
+              <ProtocolAllocationChart protocols={protocols} />
             </div>
           </div>
-        </div>
 
-        <div className="p-4 bg-white rounded-lg shadow">
-          <h2 className="text-xl font-semibold mb-4">Protocol Allocation</h2>
-          <ProtocolAllocationChart protocols={protocols} />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {sortedProtocols.map((protocol: YieldInfo, index: number) => (
-          <div
-            key={`${protocol.chain_id}-${protocol.protocol_name}-${protocol.protocol}-${index}`}
-            className="transform transition-all duration-300 opacity-0 translate-y-4"
-            style={{
-              animation: `fadeInUp 0.3s ${index * 0.1}s forwards`,
-            }}
-          >
-            <YieldCard info={protocol} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {sortedProtocols.map((protocol: YieldInfo, index: number) => (
+              <div
+                key={`${protocol.chain_id}-${protocol.protocol_name}-${protocol.protocol}-${index}`}
+                className="transform transition-all duration-300 opacity-0 translate-y-4"
+                style={{
+                  animation: `fadeInUp 0.3s ${index * 0.1}s forwards`,
+                }}
+              >
+                <YieldCard info={protocol} />
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </>
+      )}
 
       <style
         dangerouslySetInnerHTML={{

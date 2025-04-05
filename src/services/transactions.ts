@@ -14,7 +14,6 @@ export async function fetchTransactions(
   const response = await axios.get<TransactionsResponse>(
     `${BASE_URL}/portfolio/${address}/history`
   );
-  console.log("response.data", response.data);
 
   return response.data.items;
 }

@@ -1,10 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
 import moment from "moment";
 import { exportToCSV } from "../utils/csv";
 import { useAccount } from "wagmi";
-import axios from "../axios";
-import { randomDelay } from "../utils/delay";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
   AreaChart,
   Area,
@@ -16,59 +13,37 @@ import {
   Legend,
 } from "recharts";
 import { getChainName } from "../utils/chains";
+import { BalanceHistoryAPIResponse } from "../types";
 
 export interface Result {
   timestamp: number;
   value_usd: number;
 }
 
-export interface BalanceHistoryAPIResponse {
-  message: string;
-  address: string;
-  timerange: string;
-  useCache: boolean;
-  result: { [key: string]: Result[] };
-}
-
 function formatDate(timestamp: number) {
   return moment(timestamp * 1000).format("MMM D, YYYY");
 }
 
-export function ValueChart() {
-  const [timerange, setTimerange] = useState("1year");
-  const { address } = useAccount();
+interface ValueChartProps {
+  chartData?: BalanceHistoryAPIResponse;
+  timerange: string;
+  setTimerange: (timerange: string) => void;
+  isLoading: boolean;
+  refetch: () => void;
+  isRefetching: boolean;
+}
 
+export function ValueChart(props: ValueChartProps) {
   const {
-    data: chartData,
+    chartData,
+    timerange,
+    setTimerange,
     isLoading,
     refetch,
     isRefetching,
-  } = useQuery({
-    queryKey: ["valueChart", address, timerange],
-    queryFn: async () => {
-      if (!address?.startsWith("0x")) {
-        throw new Error("Invalid address");
-      }
+  } = props;
 
-      await randomDelay(1, 5); // Random delay between 1-5 seconds
-
-      const response = await axios.get<BalanceHistoryAPIResponse>(
-        `/portfolio/${address}/value-chart`,
-        {
-          params: {
-            timerange: timerange,
-          },
-        }
-      );
-
-      return response.data;
-    },
-    retry: 3, // Retry failed requests 3 times
-    retryDelay: (attemptIndex) =>
-      Math.min(1000 * Math.pow(2, attemptIndex), 5000), // Exponential backoff capped at 5s
-    enabled: !!address?.startsWith("0x"),
-    staleTime: 300000, // Consider data fresh for 5 minutes
-  });
+  const { address } = useAccount();
 
   function exportAsCSV() {
     if (!chartData) return;
@@ -92,6 +67,8 @@ export function ValueChart() {
   const formattedData = useMemo(() => {
     if (!chartData) return [];
 
+    console.log("chartData", chartData);
+
     // First, collect all unique timestamps
     const timestamps = new Set<number>();
     Object.values(chartData.result).forEach((values) => {
@@ -111,7 +88,7 @@ export function ValueChart() {
         });
         return dataPoint;
       });
-  }, [chartData]);
+  }, [chartData, isRefetching]);
 
   return (
     <div className="bg-white p-4 rounded-lg shadow">

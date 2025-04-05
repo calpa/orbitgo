@@ -82,7 +82,8 @@ function RouteComponent() {
 
         <button
           onClick={handleExportCSV}
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center"
+          className={`text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+          disabled={loading}
         >
           <Icon icon="mdi:file-export" className="w-4 h-4 mr-2" />
           Export CSV

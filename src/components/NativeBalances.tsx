@@ -210,8 +210,6 @@ const NativeBalances = () => {
   };
 
   const formatBalance = (balance: string, decimals: number) => {
-    console.log(`balance: ${balance}, decimals: ${decimals}`);
-
     return (Number(balance) / 10 ** decimals).toLocaleString(undefined, {
       maximumFractionDigits: 6,
     });

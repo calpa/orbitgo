@@ -1,3 +1,9 @@
+export interface ChainItem {
+  id: number;
+  name: string;
+  icon: string;
+}
+
 export interface getTokensOwnedByAccountResponse {
   rpp: number;
   cursor: any;
@@ -180,4 +186,12 @@ export interface PorfolioResponse {
   chains: Chain[];
   positions: Protocol[];
   totalValueUsd: number;
+}
+
+export interface BalanceHistoryAPIResponse {
+  message: string;
+  address: string;
+  timerange: string;
+  useCache: boolean;
+  result: { [key: string]: Result[] };
 }

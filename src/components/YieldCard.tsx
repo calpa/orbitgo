@@ -2,7 +2,6 @@ import { formatNumber } from "../utils/format";
 import dappsConfig from "../constants/dapps.json";
 
 const getProtocolUrl = (info: YieldInfo) => {
-  console.log("info", info);
   const protocolName = info.protocol_name;
   const dapp = dappsConfig.dapps.find((d) =>
     protocolName.toLowerCase().includes(d.name.toLowerCase())
@@ -84,7 +83,9 @@ export const YieldCard = ({ info }: YieldCardProps) => {
           </div>
         </div>
         <div className="text-right">
-          <p className="text-sm text-gray-600">Total Value</p>
+          <p className="text-sm font-medium text-indigo-600 uppercase tracking-wide">
+            Total Value
+          </p>
           <p className="font-semibold text-gray-900">
             ${formatNumber(info.value_usd)}
           </p>
@@ -94,7 +95,9 @@ export const YieldCard = ({ info }: YieldCardProps) => {
       {/* Stats Grid */}
       <div className="grid grid-cols-3 gap-4 mb-4">
         <div>
-          <p className="text-sm text-gray-600">APR</p>
+          <p className="text-sm font-medium text-indigo-600 uppercase tracking-wide">
+            APR
+          </p>
           <p className="font-semibold text-gray-900">
             {info.weighted_apr
               ? `${(info.weighted_apr * 100).toFixed(2)}%`
@@ -179,4 +182,4 @@ export const YieldCard = ({ info }: YieldCardProps) => {
       </div>
     </div>
   );
-}
+};
