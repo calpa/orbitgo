@@ -28,13 +28,13 @@ function Sidebar() {
           >
             Transactions
           </Link>
-          {/* Yields */}
+          {/* DApps */}
           <Link
             to="/dashboard/yields"
             className="text-xl font-bold"
             activeProps={{ className: "text-red-500" }}
           >
-            Yields
+            DApps
           </Link>
           <Link
             to="/dashboard/supported_chains"
